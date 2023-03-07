@@ -53,3 +53,7 @@ dkms.conf
 
 # MacOs Files
 .DS_Store
+
+# Code editor files
+.vscode/
+.idea/
