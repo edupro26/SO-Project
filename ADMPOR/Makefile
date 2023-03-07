@@ -1,5 +1,5 @@
 OBJ_dir = obj
-OBJECTOS = main.o proccess.o memory.o intermidiary.o enterprise.o client.o
+OBJECTOS = main.o process.o memory.o intermidiary.o enterprise.o client.o
 main.o = funcoes.h
 par.o =
 CC = gcc
