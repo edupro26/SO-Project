@@ -25,7 +25,16 @@ void* create_shared_memory(char* name, int size) {
 }
 
 void* create_dynamic_memory(int size){
-    //TODO
+    void *ptr = malloc(size * sizeof(int));
+
+    if(ptr == NULL){
+        perror("malloc");
+        exit(1);
+    }
+
+    memset(ptr, 0, size * sizeof(int));
+
+    return ptr;
 }
 
 void destroy_shared_memory(char* name, void* ptr, int size){
