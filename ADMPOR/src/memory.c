@@ -1,12 +1,9 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-
 
 void* create_shared_memory(char* name, int size) {
     int fd = shm_open(name, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR);
@@ -25,4 +22,40 @@ void* create_shared_memory(char* name, int size) {
     }
     memset(ptr, 0, size);
     return ptr;
+}
+
+void* create_dynamic_memory(int size){
+    //TODO
+}
+
+void destroy_shared_memory(char* name, void* ptr, int size){
+    //TODO
+}
+
+void destroy_dynamic_memory(void* ptr){
+    //TODO
+}
+
+void write_main_client_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
+    //TODO
+}
+
+void write_client_interm_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
+    //TODO
+}
+
+void write_interm_enterp_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
+    //TODO
+}
+
+void read_main_client_buffer(struct rnd_access_buffer* buffer, int client_id, int buffer_size, struct operation* op){
+    //TODO
+}
+
+void read_client_interm_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
+    //TODO
+}
+
+void read_interm_enterp_buffer(struct rnd_access_buffer* buffer, int enterp_id, int buffer_size, struct operation* op){
+    //TODO
 }
