@@ -38,7 +38,14 @@ void* create_dynamic_memory(int size){
 }
 
 void destroy_shared_memory(char* name, void* ptr, int size){
-    //TODO
+    if (munmap(ptr, size) == -1) {
+        perror("munmap");
+        exit(1);
+    }
+    if (shm_unlink(name) == -1) {
+        perror("shm_unlink");
+        exit(1);
+    }
 }
 
 void destroy_dynamic_memory(void* ptr){
@@ -47,7 +54,7 @@ void destroy_dynamic_memory(void* ptr){
 }
 
 void write_main_client_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
-    //TODO
+    
 }
 
 void write_client_interm_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
