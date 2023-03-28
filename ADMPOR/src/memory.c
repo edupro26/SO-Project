@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "../include/memory.h"
+
 void* create_shared_memory(char* name, int size) {
     int fd = shm_open(name, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR);
     if (fd == -1) {
@@ -54,11 +56,22 @@ void destroy_dynamic_memory(void* ptr){
 }
 
 void write_main_client_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
+    int slot = -1;
+    for (int i = 0; i < buffer_size; i++) {
+        if (buffer->ptrs[i] == 0) {
+            slot = i;
+            break;
+        }
+    }
     
+    if (slot >= 0) {
+        buffer->buffer[slot] = *op;
+        buffer->ptrs[slot] = 1;
+    }
 }
 
 void write_client_interm_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
-    //TODO
+    
 }
 
 void write_interm_enterp_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
