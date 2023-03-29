@@ -82,7 +82,16 @@ void write_client_interm_buffer(struct circular_buffer* buffer, int buffer_size,
 }
 
 void write_interm_enterp_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
-    //TODO
+    int in = buffer->ptrs[0]; 
+    int out = buffer->ptrs[1]; 
+    int next_in = (in + 1) % buffer_size;
+    if (next_in == out) {
+        return; 
+    }
+
+    buffer->buffer[in] = *op;
+
+    buffer->ptrs[0] = next_in;
 }
 
 void read_main_client_buffer(struct rnd_access_buffer* buffer, int client_id, int buffer_size, struct operation* op){
