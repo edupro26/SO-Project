@@ -98,19 +98,12 @@ void read_main_client_buffer(struct rnd_access_buffer* buffer, int client_id, in
     int in = buffer->ptrs[0];  
     int out = buffer->ptrs[1]; 
 
-    
     for (int i = 0; i < buffer_size; i++) {
         int index = (out + i) % buffer_size; 
-
         if (buffer->buffer[index].id != -1 && 
             buffer->buffer[index].requesting_client == client_id) { 
-
-            
             *op = buffer->buffer[index];
-
-           
             buffer->ptrs[1] = (index + 1) % buffer_size;
-
             return; 
         }
     }
@@ -119,9 +112,38 @@ void read_main_client_buffer(struct rnd_access_buffer* buffer, int client_id, in
 }
 
 void read_client_interm_buffer(struct circular_buffer* buffer, int buffer_size, struct operation* op){
-    //TODO
+    int in = buffer->ptrs->in; 
+    int out = buffer->ptrs->out;
+
+    if (in == out) {
+
+        op->id = -1;
+        return;
+    }
+
+    *op = buffer->buffer[out];
+
+    buffer->ptrs->out = (out + 1) % buffer_size;
+
+    return;
 }
 
 void read_interm_enterp_buffer(struct rnd_access_buffer* buffer, int enterp_id, int buffer_size, struct operation* op){
-    //TODO
+   int in = buffer->ptrs[0]; 
+    int out = buffer->ptrs[1]; 
+
+    for (int i = 0; i < buffer_size; i++) {
+        int index = (out + i) % buffer_size; 
+
+        if (buffer->buffer[index].id != -1 && 
+            buffer->buffer[index].requested_enterp == enterp_id) { 
+
+            *op = buffer->buffer[index];
+   
+            buffer->ptrs[1] = (index + 1) % buffer_size;
+
+            return;
+        }
+    }
+    op->id = -1;
 }
