@@ -30,55 +30,29 @@ void create_dynamic_memory_buffers(struct main_data* data) {
 }
 
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
+    // main_client buffer
+    buffers->main_client = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, sizeof(struct rnd_access_buffer));
+    buffers->main_client->ptrs = (int*)create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, sizeof(int) * 2);
+    buffers->main_client->buffer = (struct operation*)create_dynamic_memory(sizeof(struct operation) * data->max_ops);
 
-    // Create shared memory for main to client buffer
-    buffers->main_client->buffer = (struct operation*) create_shared_memory("main_to_client", data->buffers_size * sizeof(struct operation));
-    buffers->main_client->ptrs = (int*) create_shared_memory("main_to_client_ptrs", 2 * sizeof(int));
-    memset(buffers->main_client->ptrs, 0, 2 * sizeof(int));
+    // client_interm buffer
+    buffers->client_interm = (struct circular_buffer*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, sizeof(struct circular_buffer));
+    buffers->client_interm->ptrs = (struct pointers*)create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, sizeof(struct pointers));
+    buffers->client_interm->ptrs->in = 0;
+    buffers->client_interm->ptrs->out = 0;
+    buffers->client_interm->buffer = (struct operation*)create_dynamic_memory(sizeof(struct operation) * data->max_ops);
 
-    // Create shared memory for client to intermediary buffers
-    for (int i = 0; i < data->n_clients; i++) {
-        char buffer_name[20];
-        char ptrs_name[20];
-        sprintf(buffer_name, "client_to_interm_%d", i);
-        sprintf(ptrs_name, "client_to_interm_%d_ptrs", i);
-        buffers->client_interm[i].buffer = (struct operation*) create_shared_memory(buffer_name, data->buffers_size * sizeof(struct operation));
-        buffers->client_interm[i].ptrs = (struct ptrs*) create_shared_memory(ptrs_name, sizeof(struct ptrs*));
-        memset(buffers->client_interm[i].ptrs, 0, sizeof(struct ptrs*));
-    }
+    // interm_enterp buffer
+    buffers->interm_enterp = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, sizeof(struct rnd_access_buffer));
+    buffers->interm_enterp->ptrs = (int*)create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, sizeof(int) * 2);
+    buffers->interm_enterp->buffer = (struct operation*)create_dynamic_memory(sizeof(struct operation) * data->max_ops);
 
-    // Create shared memory for intermediary to enterprise buffers
-    for (int i = 0; i < data->n_intermediaries; i++) {
-        char buffer_name[20];
-        char ptrs_name[20];
-        sprintf(buffer_name, "interm_to_enterp_%d", i);
-        sprintf(ptrs_name, "interm_to_enterp_%d_ptrs", i);
-        buffers->interm_enterp[i].buffer = (struct operation*) create_shared_memory(buffer_name, data->buffers_size * sizeof(struct operation));
-        buffers->interm_enterp[i].ptrs = (struct ptrs*) create_shared_memory(ptrs_name, sizeof(struct ptrs*));
-        memset(buffers->interm_enterp[i].ptrs, 0, sizeof(struct ptrs*));
-    }
+    // results array
+    data->results = (struct operation*)create_shared_memory(STR_SHM_RESULTS, sizeof(struct operation) * MAX_RESULTS);
 
-    // Create shared memory for enterprise to intermediary buffers
-    // for (int i = 0; i < data->n_enterprises; i++) {
-    //     char buffer_name[20];
-    //     char ptrs_name[20];
-    //     sprintf(buffer_name, "enterp_to_interm_%d", i);
-    //     sprintf(ptrs_name, "enterp_to_interm_%d_ptrs", i);
-    //     buffers->enterp_to_interm[i].buffer = (struct operation*) create_shared_memory(buffer_name, data->buffers_size * sizeof(struct operation));
-    //     buffers->enterp_to_interm[i].ptrs = (struct ptrs*) create_shared_memory(ptrs_name, sizeof(struct ptrs*));
-    //     memset(buffers->enterp_to_interm[i].ptrs, 0, sizeof(struct ptrs*));
-    // }
-
-    // Create shared memory for intermediary to client buffers
-    // for (int i = 0; i < data->n_intermediaries; i++) {
-    //     char buffer_name[20];
-    //     char ptrs_name[20];
-    //     sprintf(buffer_name, "interm_to_client_%d", i);
-    //     sprintf(ptrs_name, "interm_to_client_%d_ptrs", i);
-    //     buffers->interm_to_client[i].buffer = (struct operation*) create_shared_memory(buffer_name, data->buffers_size * sizeof(struct operation));
-    //     buffers->interm_to_client[i].ptrs = (struct ptrs*) create_shared_memory(ptrs_name, sizeof(struct ptrs*));
-    //     memset(buffers->interm);
-    // }
+    // terminate flag
+    data->terminate = (int*)create_shared_memory(STR_SHM_TERMINATE, sizeof(int));
+    *data->terminate = 0;
 }
 
 void launch_processes(struct comm_buffers* buffers, struct main_data* data) {
@@ -93,11 +67,17 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data) {
 }
 
 void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
-    //TODO
+    // TODO
 }
 
+/* Cria uma nova operação identificada pelo valor atual de op_counter e com os 
+* dados introduzidos pelo utilizador na linha de comandos, escrevendo a mesma 
+* no buffer de memória partilhada entre main e clientes. Imprime o id da 
+* operação e incrementa o contador de operações op_counter. Não deve criar 
+* mais operações para além do tamanho do array data->results.
+*/
 void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data) {
-    //TODO
+    // TODO
 }
 
 
@@ -171,61 +151,24 @@ void write_statistics(struct main_data* data) {
 }
 
 void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
-    // Destroy shared memory for main to client buffer
-    destroy_shared_memory("main_to_client", buffers->main_to_client.buffer, data->buffers_size * sizeof(struct operation));
-    destroy_shared_memory("main_to_client_ptrs", buffers->main_to_client.ptrs, 2 * sizeof(int));
-
-    // Destroy shared memory for client to intermediary buffers
-    for (int i = 0; i < data->n_clients; i++) {
-        char buffer_name[20];
-        char ptrs_name[20];
-        sprintf(buffer_name, "client_to_interm_%d", i);
-        sprintf(ptrs_name, "client_to_interm_%d_ptrs", i);
-        destroy_shared_memory(buffer_name, buffers->client_to_interm[i].buffer, data->buffers_size * sizeof(struct operation));
-        destroy_shared_memory(ptrs_name, buffers->client_to_interm[i].ptrs, sizeof(struct ptrs));
-    }
-
-    // Destroy shared memory for intermediary to enterprise buffers
-    for (int i = 0; i < data->n_intermediaries; i++) {
-        char buffer_name[20];
-        char ptrs_name[20];
-        sprintf(buffer_name, "interm_to_enterp_%d", i);
-        sprintf(ptrs_name, "interm_to_enterp_%d_ptrs", i);
-        destroy_shared_memory(buffer_name, buffers->interm_to_enterp[i].buffer, data->buffers_size * sizeof(struct operation));
-        destroy_shared_memory(ptrs_name, buffers->interm_to_enterp[i].ptrs, sizeof(struct ptrs));
-    }
-
-    // Destroy shared memory for enterprise to intermediary buffers
-    for (int i = 0; i < data->n_enterprises; i++) {
-        char buffer_name[20];
-        char ptrs_name[20];
-        sprintf(buffer_name, "enterp_to_interm_%d", i);
-        sprintf(ptrs_name, "enterp_to_interm_%d_ptrs", i);
-        destroy_shared_memory(buffer_name, buffers->enterp_to_interm[i].buffer, data->buffers_size * sizeof(struct operation));
-        destroy_shared_memory(ptrs_name, buffers->enterp_to_interm[i].ptrs, sizeof(struct ptrs));
-    }
-
-    // Destroy shared memory for intermediary to client buffers
-    for (int i = 0; i < data->n_intermediaries; i++) {
-        char buffer_name[20];
-        char ptrs_name[20];
-        sprintf(buffer_name, "interm_to_client_%d", i);
-        sprintf(ptrs_name, "interm_to_client_%d_ptrs", i);
-        destroy_shared_memory(buffer_name, buffers->interm_to_client[i].buffer, data->buffers_size * sizeof(struct operation));
-        destroy_shared_memory(ptrs_name, buffers->interm_to_client[i].ptrs, sizeof(struct ptrs));
-    }
-
-    // Destroy shared memory for results array and terminate flag
-    destroy_shared_memory("results", data->results, MAX_RESULTS * sizeof(struct operation));
-    destroy_shared_memory("terminate", data->terminate, sizeof(int));
-
-    // Free dynamic memory for pid and stats arrays
+    // Destroy dynamic memory
     destroy_dynamic_memory(data->client_pids);
     destroy_dynamic_memory(data->intermediary_pids);
     destroy_dynamic_memory(data->enterprise_pids);
     destroy_dynamic_memory(data->client_stats);
     destroy_dynamic_memory(data->intermediary_stats);
     destroy_dynamic_memory(data->enterprise_stats);
+
+    // Destroy shared memory
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client->ptrs, data->buffers_size);
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm->ptrs, sizeof(struct pointers));
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp->ptrs, sizeof(struct pointers));
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_RESULTS, data->results, MAX_RESULTS * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
+
 }
 
 int main(int argc, char *argv[]) {
@@ -249,6 +192,8 @@ int main(int argc, char *argv[]) {
     destroy_dynamic_memory(buffers->client_interm);
     destroy_dynamic_memory(buffers->interm_enterp);
     destroy_dynamic_memory(buffers);
+
+    
 
     return 0;
 }
