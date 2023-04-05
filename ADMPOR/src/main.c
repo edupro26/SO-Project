@@ -100,8 +100,13 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     //TODO
 }
 
+/* Função que lê um id de operação do utilizador e verifica se a mesma é valida.
+* Em caso afirmativo imprime informação da mesma, nomeadamente o seu estado, o 
+* id do cliente que fez o pedido, o id da empresa requisitada, e os ids do cliente,
+* intermediário, e empresa que a receberam e processaram.
+*/
 void read_status(struct main_data* data) {
-    //TODO
+   
 }
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
@@ -117,7 +122,61 @@ void write_statistics(struct main_data* data) {
 }
 
 void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
-    //TODO
+    // Destroy shared memory for main to client buffer
+    destroy_shared_memory("main_to_client", buffers->main_to_client.buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory("main_to_client_ptrs", buffers->main_to_client.ptrs, 2 * sizeof(int));
+
+    // Destroy shared memory for client to intermediary buffers
+    for (int i = 0; i < data->n_clients; i++) {
+        char buffer_name[20];
+        char ptrs_name[20];
+        sprintf(buffer_name, "client_to_interm_%d", i);
+        sprintf(ptrs_name, "client_to_interm_%d_ptrs", i);
+        destroy_shared_memory(buffer_name, buffers->client_to_interm[i].buffer, data->buffers_size * sizeof(struct operation));
+        destroy_shared_memory(ptrs_name, buffers->client_to_interm[i].ptrs, sizeof(struct ptrs));
+    }
+
+    // Destroy shared memory for intermediary to enterprise buffers
+    for (int i = 0; i < data->n_intermediaries; i++) {
+        char buffer_name[20];
+        char ptrs_name[20];
+        sprintf(buffer_name, "interm_to_enterp_%d", i);
+        sprintf(ptrs_name, "interm_to_enterp_%d_ptrs", i);
+        destroy_shared_memory(buffer_name, buffers->interm_to_enterp[i].buffer, data->buffers_size * sizeof(struct operation));
+        destroy_shared_memory(ptrs_name, buffers->interm_to_enterp[i].ptrs, sizeof(struct ptrs));
+    }
+
+    // Destroy shared memory for enterprise to intermediary buffers
+    for (int i = 0; i < data->n_enterprises; i++) {
+        char buffer_name[20];
+        char ptrs_name[20];
+        sprintf(buffer_name, "enterp_to_interm_%d", i);
+        sprintf(ptrs_name, "enterp_to_interm_%d_ptrs", i);
+        destroy_shared_memory(buffer_name, buffers->enterp_to_interm[i].buffer, data->buffers_size * sizeof(struct operation));
+        destroy_shared_memory(ptrs_name, buffers->enterp_to_interm[i].ptrs, sizeof(struct ptrs));
+    }
+
+    // Destroy shared memory for intermediary to client buffers
+    for (int i = 0; i < data->n_intermediaries; i++) {
+        char buffer_name[20];
+        char ptrs_name[20];
+        sprintf(buffer_name, "interm_to_client_%d", i);
+        sprintf(ptrs_name, "interm_to_client_%d_ptrs", i);
+        destroy_shared_memory(buffer_name, buffers->interm_to_client[i].buffer, data->buffers_size * sizeof(struct operation));
+        destroy_shared_memory(ptrs_name, buffers->interm_to_client[i].ptrs, sizeof(struct ptrs));
+    }
+
+    // Destroy shared memory for results array and terminate flag
+    destroy_shared_memory("results", data->results, MAX_RESULTS * sizeof(struct operation));
+    destroy_shared_memory("terminate", data->terminate, sizeof(int));
+
+    // Free dynamic memory for pid and stats arrays
+    destroy_dynamic_memory(data->client_pids);
+    destroy_dynamic_memory(data->intermediary_pids);
+    destroy_dynamic_memory(data->enterprise_pids);
+    destroy_dynamic_memory(data->client_stats);
+    destroy_dynamic_memory(data->intermediary_stats);
+    destroy_dynamic_memory(data->enterprise_stats);
 }
 
 int main(int argc, char *argv[]) {
