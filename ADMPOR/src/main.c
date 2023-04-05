@@ -123,15 +123,30 @@ void read_status(struct main_data* data) {
 }
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
-    //TODO
+    *(data->terminate) = 1;
+
+    printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
+
+    wait_processes(data);
+    write_statistics(data);
+    destroy_memory_buffers(data, buffers);
+
 }
 
 void wait_processes(struct main_data* data) {
-    //TODO
+   
 }
 
 void write_statistics(struct main_data* data) {
-    //TODO
+     for (int i = 0; i < data->n_clients; i++) {
+        printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
+    }
+    for (int i = 0; i < data->n_intermediaries; i++) {
+        printf("Intermidiário %d entregou %d pedidos!\n", i, data->intermediary_stats[i]);
+    }
+    for (int i = 0; i < data->n_enterprises; i++) {
+        printf("Empresa %d recebeu %d pedidos!\n", i, data->enterprise_stats[i]);
+    }
 }
 
 void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
