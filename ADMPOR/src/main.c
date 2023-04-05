@@ -100,13 +100,26 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     //TODO
 }
 
-/* Função que lê um id de operação do utilizador e verifica se a mesma é valida.
-* Em caso afirmativo imprime informação da mesma, nomeadamente o seu estado, o 
-* id do cliente que fez o pedido, o id da empresa requisitada, e os ids do cliente,
-* intermediário, e empresa que a receberam e processaram.
-*/
+
 void read_status(struct main_data* data) {
-   
+    int op_id;
+    scanf("%d", &op_id);
+    if (op_id >= 100) {
+        printf("id de pedido fornecido é inválido!\n"); 
+        return;
+    }
+
+    if (op_id < 0 || data->results[op_id].id == -1) { // Need testing with ids bigger that results size
+        printf("Pedido %d ainda não é válido!\n", op_id);
+        return;
+    }
+
+    char status = data->results[op_id].status;
+    int client_id = data->results[op_id].requesting_client;
+    int enterprise_id = data->results[op_id].requested_enterp;
+
+    printf("Pedido %d com estado %c requesitado pelo ciente %d à empresa %d\n", op_id, status, client_id, enterprise_id);
+
 }
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
