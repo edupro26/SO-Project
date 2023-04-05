@@ -134,11 +134,32 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
 }
 
 void wait_processes(struct main_data* data) {
-   
+    int pid, status;
+    for (int i = 0; i < data->n_clients; i++) {
+        pid = wait_process(data->client_pids[i], &status);
+        if (pid == -1) {
+            perror("waitpid");
+            exit(1);
+        }
+    }
+    for (int i = 0; i < data->n_intermediaries; i++) {
+        pid = wait_process(data->intermediary_pids[i], &status);
+        if (pid == -1) {
+            perror("waitpid");
+            exit(1);
+        }
+    }
+    for (int i = 0; i < data->n_enterprises; i++) {
+        pid = wait_process(data->enterprise_pids[i], &status);
+        if (pid == -1) {
+            perror("waitpid");
+            exit(1);
+        }
+    }
 }
 
 void write_statistics(struct main_data* data) {
-     for (int i = 0; i < data->n_clients; i++) {
+    for (int i = 0; i < data->n_clients; i++) {
         printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
     }
     for (int i = 0; i < data->n_intermediaries; i++) {
