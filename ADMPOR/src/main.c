@@ -67,7 +67,29 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data) {
 }
 
 void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
-    // TODO
+    char command[10];
+    int op_counter = 0;
+    
+    while (!(*data->terminate)) {
+        printf("> ");
+        scanf("%s", command);
+        
+        if (strcmp(command, "op") == 0) {
+            create_request(&op_counter, buffers, data);
+        } else if (strcmp(command, "status") == 0) {
+            read_status(data);
+        } else if (strcmp(command, "stop") == 0) {
+            stop_execution(data, buffers);
+        } else if (strcmp(command, "help") == 0) {
+            printf("Available commands:\n");
+            printf("op - create a new operation\n");
+            printf("status - get status of an operation\n");
+            printf("stop - stop the program\n");
+            printf("help - show this help message\n");
+        } else {
+            printf("Error: invalid command. Type 'help' for available commands.\n");
+        }
+    }
 }
 
 /* Cria uma nova operação identificada pelo valor atual de op_counter e com os 
@@ -114,27 +136,19 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
 }
 
 void wait_processes(struct main_data* data) {
-    int pid, status;
+    // client processes
     for (int i = 0; i < data->n_clients; i++) {
-        pid = wait_process(data->client_pids[i], &status);
-        if (pid == -1) {
-            perror("waitpid");
-            exit(1);
-        }
+        wait_process(data->client_pids[i]);
     }
+    
+    // intermediary processes
     for (int i = 0; i < data->n_intermediaries; i++) {
-        pid = wait_process(data->intermediary_pids[i], &status);
-        if (pid == -1) {
-            perror("waitpid");
-            exit(1);
-        }
+        wait_process(data->intermediary_pids[i]);
     }
+    
+    // enterprise processes
     for (int i = 0; i < data->n_enterprises; i++) {
-        pid = wait_process(data->enterprise_pids[i], &status);
-        if (pid == -1) {
-            perror("waitpid");
-            exit(1);
-        }
+        wait_process(data->enterprise_pids[i]);
     }
 }
 
