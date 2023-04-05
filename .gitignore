@@ -51,14 +51,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-<<<<<<< HEAD
 # MacOs Files
 .DS_Store
 
-# Code editor files
+# VS code
 .vscode/
-.idea/
-=======
-# MacOs files
-.DS_Store
->>>>>>> e777e71 (Updated .gitignore)
