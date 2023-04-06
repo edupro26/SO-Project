@@ -101,7 +101,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     scanf("%s", temp);
     int enterp_id = atoi(temp);
 
-    buffers->main_client->buffer->id = op_counter;
+    buffers->main_client->buffer->id = *op_counter;
     buffers->main_client->buffer->requesting_client = client_id;
     buffers->main_client->buffer->requested_enterp = enterp_id;
 
