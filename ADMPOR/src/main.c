@@ -92,16 +92,20 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
     }
 }
 
-/* Cria uma nova operação identificada pelo valor atual de op_counter e com os 
-* dados introduzidos pelo utilizador na linha de comandos, escrevendo a mesma 
-* no buffer de memória partilhada entre main e clientes. Imprime o id da 
-* operação e incrementa o contador de operações op_counter. Não deve criar 
-* mais operações para além do tamanho do array data->results.
-*/
 void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data) {
-    // TODO
-}
+    char temp[0];
+    scanf("%s", temp);
+    int client_id = atoi(temp);
+    scanf("%s", temp);
+    int enterp_id = atoi(temp);
 
+    buffers->main_client->buffer->id = op_counter;
+    buffers->main_client->buffer->requesting_client = client_id;
+    buffers->main_client->buffer->requested_enterp = enterp_id;
+
+    printf("O pedido #%d foi criado \n", *op_counter);
+    (*op_counter)++;
+}
 
 void read_status(struct main_data* data) {
     int op_id;
