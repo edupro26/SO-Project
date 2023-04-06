@@ -71,7 +71,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
     int op_counter = 0;
     
     while (!(*data->terminate)) {
-        printf("> ");
+        printf("Introduzir ação:\n");
         scanf("%s", command);
         
         if (strcmp(command, "op") == 0) {
@@ -81,15 +81,17 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
         } else if (strcmp(command, "stop") == 0) {
             stop_execution(data, buffers);
         } else if (strcmp(command, "help") == 0) {
-            printf("Available commands:\n");
-            printf("op - create a new operation\n");
-            printf("status - get status of an operation\n");
-            printf("stop - stop the program\n");
-            printf("help - show this help message\n");
+            printf("Ações disponíveis:\n");
+            printf("op client empresa - criar uma nova operação\n");
+            printf("status id - consultar o estado de uma operação\n");
+            printf("stop - termina a execução do AdmPor.\n");
+            printf("help - imprime informação sobre as ações disponíveis.\n");
         } else {
-            printf("Error: invalid command. Type 'help' for available commands.\n");
+            printf("Ação não reconhecida, insira 'help' para assistência..\n");
         }
     }
+
+    
 }
 
 void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data) {
