@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/client.h"
+#include "client.h"
 
 int execute_client(int client_id, struct comm_buffers* buffers, struct main_data* data) {
     //TODO

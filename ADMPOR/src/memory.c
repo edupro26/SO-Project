@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "../include/memory.h"
+#include "memory.h"
 
 void* create_shared_memory(char* name, int size) {
     int fd = shm_open(name, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR);

@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/process.h"
-#include "../include/main.h"
+#include "process.h"
+#include "main.h"
 
 void main_args(int argc, char* argv[], struct main_data* data){
     int temp[5];

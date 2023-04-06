@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/enterprise.h"
+#include "enterprise.h"
 
 int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data) {
     //TODO
