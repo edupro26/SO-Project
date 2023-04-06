@@ -57,13 +57,13 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
 
 void launch_processes(struct comm_buffers* buffers, struct main_data* data) {
     for(int i = 0; i < data->n_clients; i++)
-        data->client_pids = launch_client(i, buffers, data);
+        data->client_pids[i] = launch_client(i, buffers, data);
 
     for(int i = 0; i < data->n_intermediaries; i++)
-        data->intermediary_pids = launch_interm(i, buffers, data);
+        data->intermediary_pids[i] = launch_interm(i, buffers, data);
 
     for(int i = 0; i < data->n_enterprises; i++)
-        data->enterprise_pids = launch_enterp(i, buffers, data);
+        data->enterprise_pids[i] = launch_enterp(i, buffers, data);
 }
 
 void user_interaction(struct comm_buffers* buffers, struct main_data* data) {

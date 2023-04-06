@@ -67,4 +67,6 @@ int wait_process(int process_id){
         int exit_status = WEXITSTATUS(status);
         return exit_status;
     }
+
+    return -1;
 }

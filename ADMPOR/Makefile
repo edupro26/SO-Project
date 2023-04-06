@@ -8,3 +8,6 @@ out: $(OBJECTOS)
 	$(CC) $(addprefix $(OBJ_dir)/,$(OBJECTOS)) -o bin/out
 %.o: src/%.c $($@)
 	$(CC) -I include -o $(OBJ_dir)/$@ -c $<
+
+cleanall:
+	rm -rf $(OBJ_dir)/* bin/*
