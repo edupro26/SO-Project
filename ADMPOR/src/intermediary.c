@@ -6,6 +6,8 @@
 
 int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data) {
     //TODO
+
+    return 0;
 }
 
 void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data) {
@@ -13,9 +15,20 @@ void intermediary_receive_operation(struct operation* op, struct comm_buffers* b
 }
 
 void intermediary_process_operation(struct operation* op, int interm_id, struct main_data* data, int* counter) {
-    //TODO
+    op->receiving_interm = interm_id;
+    op->status = 'I'; // Set the status to "processed by intermediary"
+    (*counter)++; // Increment the operations counter
+
+    // Update the operation in the results array
+    int idx = op->id % MAX_RESULTS;
+    data->results[idx] = *op;
+
+    // Increment the number of operations processed by this intermediary
+    data->intermediary_stats[interm_id]++;
+
+
 }
 
 void intermediary_send_answer(struct operation* op, struct comm_buffers* buffers, struct main_data* data) {
-    //TODO
+    write_interm_enterp_buffer(buffers->interm_enterp, data->buffers_size, op);
 }
