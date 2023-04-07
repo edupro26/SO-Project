@@ -11,10 +11,10 @@ int execute_client(int client_id, struct comm_buffers *buffers, struct main_data
         struct operation *p_op = &op;
         client_get_operation(p_op, client_id, buffers, data);
 
-        if((*data->terminate))
+        if((*data->terminate)) // If the terminate flag is set, return the number of operations processed
             return counter;
 
-        if(p_op->id >= 0){
+        if(p_op->id >= 0){ // Only process the operation if it is valid (!= -1)
             client_process_operation(p_op, client_id, data, &counter);
             client_send_operation(p_op, buffers, data);
         }
