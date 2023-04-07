@@ -90,7 +90,6 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
             printf("Ação não reconhecida, insira 'help' para assistência..\n");
         }
     }
-
     
 }
 
@@ -100,19 +99,16 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     int client_id = atoi(temp);
     scanf("%s", temp);
     int enterp_id = atoi(temp);
-
+    
     struct operation op;
     op.id = *op_counter;
     op.requesting_client = client_id;
     op.requested_enterp = enterp_id;
     op.status = 'M';
 
-    struct operation* p_op = &op;
+    data->results[*op_counter] = op;
+    struct operation *p_op = &op;
     write_main_client_buffer(buffers->main_client, data->buffers_size, p_op);
-
-    // buffers->main_client->buffer->id = *op_counter;
-    // buffers->main_client->buffer->requesting_client = client_id;
-    // buffers->main_client->buffer->requested_enterp = enterp_id;
 
     printf("O pedido #%d foi criado \n", *op_counter);
     (*op_counter)++;

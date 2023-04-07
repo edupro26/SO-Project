@@ -9,7 +9,7 @@
 #include "memory.h"
 
 void* create_shared_memory(char* name, int size) {
-    int fd = shm_open(name, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR);
+    int fd = shm_open(name, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (fd == -1) {
         perror("shm_open");
         exit(1);
