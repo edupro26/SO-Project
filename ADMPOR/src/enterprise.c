@@ -6,6 +6,8 @@
 
 int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data) {
     //TODO
+
+    return 0; 
 }
 
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data) {
