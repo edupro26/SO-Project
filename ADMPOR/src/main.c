@@ -36,21 +36,21 @@ void create_dynamic_memory_buffers(struct main_data* data) {
 
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
     // main_client buffer
-    buffers->main_client = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, sizeof(struct rnd_access_buffer));
-    buffers->main_client->ptrs = (int*)create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, sizeof(int) * 2);
-    buffers->main_client->buffer = (struct operation*)create_dynamic_memory(sizeof(struct operation) * data->max_ops);
+    //buffers->main_client = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, sizeof(struct rnd_access_buffer));
+    buffers->main_client->ptrs = (int*)create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, sizeof(int));
+    buffers->main_client->buffer = (struct operation*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, sizeof(struct operation));
 
     // client_interm buffer
-    buffers->client_interm = (struct circular_buffer*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, sizeof(struct circular_buffer));
+    //buffers->client_interm = (struct circular_buffer*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, sizeof(struct circular_buffer));
     buffers->client_interm->ptrs = (struct pointers*)create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, sizeof(struct pointers));
     buffers->client_interm->ptrs->in = 0;
     buffers->client_interm->ptrs->out = 0;
-    buffers->client_interm->buffer = (struct operation*)create_dynamic_memory(sizeof(struct operation) * data->max_ops);
+    buffers->client_interm->buffer = (struct operation*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, sizeof(struct operation));
 
     // interm_enterp buffer
-    buffers->interm_enterp = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, sizeof(struct rnd_access_buffer));
-    buffers->interm_enterp->ptrs = (int*)create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, sizeof(int) * 2);
-    buffers->interm_enterp->buffer = (struct operation*)create_dynamic_memory(sizeof(struct operation) * data->max_ops);
+    //buffers->interm_enterp = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, sizeof(struct rnd_access_buffer));
+    buffers->interm_enterp->ptrs = (int*)create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, sizeof(int));
+    buffers->interm_enterp->buffer = (struct operation*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, sizeof(struct operation));
 
     // results array
     data->results = (struct operation*)create_shared_memory(STR_SHM_RESULTS, sizeof(struct operation) * MAX_RESULTS);
