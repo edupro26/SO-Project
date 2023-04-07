@@ -5,13 +5,28 @@
 #include "intermediary.h"
 
 int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data) {
-    //TODO
+    int counter = 0;
 
-    return 0;
+    while (1)
+    {
+        struct operation op;
+        struct operation* p_op = &op;
+        intermediary_receive_operation(p_op, buffers, data);
+
+        if ((*data->terminate)) // If the terminate flag is set, return the number of operations processed
+            return counter;
+
+        if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
+            intermediary_process_operation(p_op, interm_id, data, &counter);
+            intermediary_send_answer(p_op, buffers, data);
+        }
+    }
+
+    return counter;
 }
 
 void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data) {
-    //TODO
+    
 }
 
 void intermediary_process_operation(struct operation* op, int interm_id, struct main_data* data, int* counter) {
