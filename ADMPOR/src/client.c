@@ -29,9 +29,15 @@ void client_get_operation(struct operation *op, int client_id, struct comm_buffe
 
 void client_process_operation(struct operation *op, int client_id, struct main_data *data, int *counter) {
     op->receiving_client = client_id;
-    op->status = 'C';
-    (*counter)++;
-    // TODO data operations
+    op->status = 'C'; // Set the status to "processed by client"
+    (*counter)++; // Increment the operations counter
+    
+    // Update the operation in the results array
+    int idx = op->id % MAX_RESULTS;
+    data->results[idx] = *op;
+    
+    // Increment the number of operations processed by this client
+    data->client_stats[client_id]++;
 }
 
 void client_send_operation(struct operation *op, struct comm_buffers *buffers, struct main_data *data) {
