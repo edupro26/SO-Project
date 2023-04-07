@@ -4,23 +4,25 @@
 
 #include "client.h"
 
-int execute_client(int client_id, struct comm_buffers *buffers, struct main_data *data) {
+int execute_client(int client_id, struct comm_buffers *buffers, struct main_data *data) {  
     int counter = 0;
     while (1) {
-        struct operation* op;
-        client_get_operation(op, client_id, buffers, data);
-        if (!(data->terminate) && op->id != -1) {
-            client_process_operation(op, client_id, data, &counter);
-            // TODO
-        }
-        else {
+        struct operation op;
+        struct operation *p_op = &op;
+        client_get_operation(p_op, client_id, buffers, data);
+
+        if((*data->terminate))
             return counter;
+
+        if(p_op->id >= 0){
+            client_process_operation(p_op, client_id, data, &counter);
+            client_send_operation(p_op, buffers, data);
         }
     }
 }
 
 void client_get_operation(struct operation *op, int client_id, struct comm_buffers *buffers, struct main_data *data) {
-    if(!(data->terminate)){
+    if(!(*data->terminate)){
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
     }
     
@@ -36,6 +38,8 @@ void client_process_operation(struct operation *op, int client_id, struct main_d
     int idx = op->id % MAX_RESULTS;
     data->results[idx] = *op;
     
+    // Not saving in results after first operation
+
     // Increment the number of operations processed by this client
     data->client_stats[client_id]++;
 }
