@@ -8,6 +8,11 @@
 void main_args(int argc, char* argv[], struct main_data* data){
     int temp[5];
 
+    if (argc != 6) {
+        printf("Uso: admpor max_ops buffers_size n_clients n_intermediaries n_enterprises\nExemplo: ./bin/admpor 10 10 1 1 1\n");
+        exit(1);
+    }
+
     for (int i = 1; i < argc; i++){
         temp[i-1] = atoi(argv[i]);
     }
