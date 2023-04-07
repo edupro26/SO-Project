@@ -35,5 +35,5 @@ void client_process_operation(struct operation *op, int client_id, struct main_d
 }
 
 void client_send_operation(struct operation *op, struct comm_buffers *buffers, struct main_data *data) {
-    // TODO
+    write_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
 }
