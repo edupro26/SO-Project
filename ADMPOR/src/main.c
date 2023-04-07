@@ -147,6 +147,9 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
 
     wait_processes(data);
     write_statistics(data);
+
+    //Needs fixing segmentation fault
+
     destroy_memory_buffers(data, buffers);
 
 }
