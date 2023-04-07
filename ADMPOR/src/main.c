@@ -78,9 +78,27 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
     while (!(*data->terminate)) {
         printf("Introduzir ação:\n");
         scanf("%s", command);
-        
         if (strcmp(command, "op") == 0) {
             create_request(&op_counter, buffers, data);
+            
+            char status;
+            if(op_counter != 0)
+                status = data->results[op_counter - 1].status;
+            else
+                status = data->results[0].status;
+
+            if(status == 'C'){
+                printf("Cliente recebeu pedido!\n");
+            } 
+            if(status == 'I'){
+                printf("Cliente recebeu pedido!\n");
+                printf("Intermediário recebeu pedido!\n");
+            }
+            if(status == 'A' || status == 'E'){
+                printf("Cliente recebeu pedido!\n");
+                printf("Intermediário recebeu pedido!\n");
+                printf("Empresa recebeu pedido!\n");
+            }
         } else if (strcmp(command, "status") == 0) {
             read_status(data);
         } else if (strcmp(command, "stop") == 0) {
@@ -95,7 +113,6 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
             printf("Ação não reconhecida, insira 'help' para assistência..\n");
         }
     }
-    
 }
 
 void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data) {
@@ -122,22 +139,23 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
 void read_status(struct main_data* data) {
     int op_id;
     scanf("%d", &op_id);
-    if (op_id >= 100) {
+    if (op_id < 0 || op_id >= 100) {
         printf("id de pedido fornecido é inválido!\n"); 
         return;
     }
 
-    if (op_id < 0 || data->results[op_id].id == -1) { // Need testing with ids bigger that results size
+    char status = data->results[op_id].status;
+    if(status == 'M' || status == 'C' || status == 'I' || status == 'A' || status == 'E'){
+        char status = data->results[op_id].status;
+        int client_id = data->results[op_id].requesting_client;
+        int enterprise_id = data->results[op_id].requested_enterp;
+
+        printf("Pedido %d com estado %c requesitado pelo ciente %d à empresa %d\n", op_id, status, client_id, enterprise_id);
+    }
+    else{
         printf("Pedido %d ainda não é válido!\n", op_id);
         return;
     }
-
-    char status = data->results[op_id].status;
-    int client_id = data->results[op_id].requesting_client;
-    int enterprise_id = data->results[op_id].requested_enterp;
-
-    printf("Pedido %d com estado %c requesitado pelo ciente %d à empresa %d\n", op_id, status, client_id, enterprise_id);
-
 }
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
