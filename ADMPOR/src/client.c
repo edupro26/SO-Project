@@ -37,9 +37,6 @@ void client_process_operation(struct operation *op, int client_id, struct main_d
     // Update the operation in the results array
     int idx = op->id % MAX_RESULTS;
     data->results[idx] = *op;
-
-    // Increment the number of operations processed by this client
-    data->client_stats[client_id]++;
 }
 
 void client_send_operation(struct operation *op, struct comm_buffers *buffers, struct main_data *data) {

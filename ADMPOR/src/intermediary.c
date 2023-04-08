@@ -6,9 +6,7 @@
 
 int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data) {
     int counter = 0;
-
-    while (1)
-    {
+    while (1) {
         struct operation op;
         struct operation* p_op = &op;
         intermediary_receive_operation(p_op, buffers, data);
@@ -21,12 +19,14 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
             intermediary_send_answer(p_op, buffers, data);
         }
     }
-
-    return counter;
 }
 
 void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data) {
-    
+    if(!(*data->terminate)){
+        read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
+    }
+
+    return;
 }
 
 void intermediary_process_operation(struct operation* op, int interm_id, struct main_data* data, int* counter) {
@@ -37,11 +37,6 @@ void intermediary_process_operation(struct operation* op, int interm_id, struct 
     // Update the operation in the results array
     int idx = op->id % MAX_RESULTS;
     data->results[idx] = *op;
-
-    // Increment the number of operations processed by this intermediary
-    data->intermediary_stats[interm_id]++;
-
-
 }
 
 void intermediary_send_answer(struct operation* op, struct comm_buffers* buffers, struct main_data* data) {
