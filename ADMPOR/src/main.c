@@ -75,13 +75,18 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data) {
 void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
     char command[10];
     int op_counter = 0;
+    printf("Ações disponíveis:\n");
+    printf("    op client empresa - criar uma nova operação\n");
+    printf("    status id - consultar o estado de uma operação\n");
+    printf("    stop - termina a execução do AdmPor.\n");
+    printf("    help - imprime informação sobre as ações disponíveis.\n");
     
     while (!(*data->terminate)) {
         printf("Introduzir ação:\n");
         scanf("%s", command);
         if (strcmp(command, "op") == 0) {
             create_request(&op_counter, buffers, data);
-            sleep(0.5);
+            sleep(1);
 
             char status;
             if(op_counter != 0)
@@ -107,10 +112,10 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
             stop_execution(data, buffers);
         } else if (strcmp(command, "help") == 0) {
             printf("Ações disponíveis:\n");
-            printf("op client empresa - criar uma nova operação\n");
-            printf("status id - consultar o estado de uma operação\n");
-            printf("stop - termina a execução do AdmPor.\n");
-            printf("help - imprime informação sobre as ações disponíveis.\n");
+            printf("    op client empresa - criar uma nova operação\n");
+            printf("    status id - consultar o estado de uma operação\n");
+            printf("    stop - termina a execução do AdmPor.\n");
+            printf("    help - imprime informação sobre as ações disponíveis.\n");
         } else {
             printf("Ação não reconhecida, insira 'help' para assistência..\n");
         }
