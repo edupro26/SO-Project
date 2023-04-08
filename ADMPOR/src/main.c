@@ -86,8 +86,8 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
         scanf("%s", command);
         if (strcmp(command, "op") == 0) {
             create_request(&op_counter, buffers, data);
-            sleep(1);
-
+            usleep(100000);
+                    
             char status;
             if(op_counter != 0)
                 status = data->results[op_counter - 1].status;
@@ -152,28 +152,23 @@ void read_status(struct main_data* data) {
     }
 
     int receiving_client, receiving_interm, receiving_enterp;
-
     char status = data->results[op_id].status;
     if(status == 'M' || status == 'C' || status == 'I' || status == 'A' || status == 'E'){
-        char status = data->results[op_id].status;
         int client_id = data->results[op_id].requesting_client;
         int enterprise_id = data->results[op_id].requested_enterp;
+        receiving_client = data->results[op_id].receiving_client;
+        receiving_interm = data->results[op_id].receiving_interm;
+        receiving_enterp = data->results[op_id].receiving_enterp;
         if (status == 'M') {
             printf("Pedido %d com estado %c requesitado pelo ciente %d à empresa %d\n", op_id, status, client_id, enterprise_id);
         } else if (status == 'C') {
-            int receiving_client = data->results[op_id].receiving_client;
             printf("Pedido %d com estado %c requesitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d\n", op_id, status, client_id, enterprise_id, receiving_client);
         } else if (status == 'I') {
-            receiving_client = data->results[op_id].receiving_client;
-            receiving_interm = data->results[op_id].receiving_interm;
-            printf("Pedido %d com estado I requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e processado pelo intermediário %d!\n", op_id, client_id, enterprise_id, receiving_client, receiving_interm);
+            printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e processado pelo intermediário %d!\n", op_id, status, client_id, enterprise_id, receiving_client, receiving_interm);
         } else if (status == 'A' || status == 'E') {
-            receiving_client = data->results[op_id].receiving_client;
-            receiving_interm = data->results[op_id].receiving_interm;
-            receiving_enterp = data->results[op_id].receiving_enterp;
-            printf("Pedido %d com estado A requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!\n", op_id, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
+            printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!\n", op_id, status, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
         }
-    } else{
+    } else {
         printf("Pedido %d ainda não é válido!\n", op_id);
         return;
     }
