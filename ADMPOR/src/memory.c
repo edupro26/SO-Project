@@ -83,16 +83,28 @@ void write_client_interm_buffer(struct circular_buffer* buffer, int buffer_size,
 }
 
 void write_interm_enterp_buffer(struct rnd_access_buffer* buffer, int buffer_size, struct operation* op){
-    int in = buffer->ptrs[0]; 
-    int out = buffer->ptrs[1]; 
-    int next_in = (in + 1) % buffer_size;
-    if (next_in == out) {
-        return; 
+    // int in = buffer->ptrs[0]; 
+    // int out = buffer->ptrs[1]; 
+    // int next_in = (in + 1) % buffer_size;
+    // if (next_in == out) {
+    //     return; 
+    // }
+
+    // buffer->buffer[in] = *op;
+    // buffer->ptrs[0] = next_in;
+
+    int slot = -1;
+    for (int i = 0; i < buffer_size; i++) {
+        if (buffer->ptrs[i] == 0) {
+            slot = i;
+            break;
+        }
     }
-
-    buffer->buffer[in] = *op;
-
-    buffer->ptrs[0] = next_in;
+    
+    if (slot >= 0) {
+        buffer->buffer[slot] = *op;
+        buffer->ptrs[slot] = 1;
+    }
 }
 
 void read_main_client_buffer(struct rnd_access_buffer* buffer, int client_id, int buffer_size, struct operation* op){
@@ -128,33 +140,35 @@ void read_client_interm_buffer(struct circular_buffer* buffer, int buffer_size, 
     int out = buffer->ptrs->out;
 
     if (in == out) {
-
         op->id = -1;
         return;
     }
 
     *op = buffer->buffer[out];
-
     buffer->ptrs->out = (out + 1) % buffer_size;
-
-    return;
 }
 
 void read_interm_enterp_buffer(struct rnd_access_buffer* buffer, int enterp_id, int buffer_size, struct operation* op){
-   int in = buffer->ptrs[0]; 
-    int out = buffer->ptrs[1]; 
+    // int in = buffer->ptrs[0]; 
+    // int out = buffer->ptrs[1]; 
+    // for (int i = 0; i < buffer_size; i++) {
+    //     int index = (out + i) % buffer_size; 
+    //     if (buffer->buffer[index].id != -1 && 
+    //         buffer->buffer[index].requested_enterp == enterp_id) { 
+    //         *op = buffer->buffer[index];
+    //         buffer->ptrs[1] = (index + 1) % buffer_size;
+    //         return;
+    //     }
+    // }
 
-    for (int i = 0; i < buffer_size; i++) {
-        int index = (out + i) % buffer_size; 
-
-        if (buffer->buffer[index].id != -1 && 
-            buffer->buffer[index].requested_enterp == enterp_id) { 
-
-            *op = buffer->buffer[index];
-   
-            buffer->ptrs[1] = (index + 1) % buffer_size;
-
-            return;
+    for(int i = 0; i < buffer_size; i++){
+        if(buffer->ptrs[i] == 1){
+            struct operation temp = buffer->buffer[i];
+            if(temp.id != -1 && temp.requested_enterp == enterp_id){
+                *op = temp;
+                buffer->ptrs[i] = 0;
+                return;
+            }
         }
     }
     op->id = -1;

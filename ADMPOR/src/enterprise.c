@@ -6,23 +6,17 @@
 
 int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data) {
     int counter = 0;
+    while (1) {
+        struct operation op;
+        struct operation* p_op = &op;
+        enterprise_receive_operation(p_op, enterp_id, buffers, data);
 
-    // while (1)
-    // {
-    //     struct operation op;
-    //     struct operation* p_op = &op;
-    //     enterprise_receive_operation(p_op, enterp_id, buffers, data);
+        if ((*data->terminate)) // If the terminate flag is set, return the number of operations processed
+            return counter;
 
-    //     if ((*data->terminate)) // If the terminate flag is set, return the number of operations processed
-    //         return counter;
-
-    //     if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
-    //         enterprise_process_operation(p_op, enterp_id, data, &counter);
-    //     }
-    // }
-    
-
-    return counter;
+        if (p_op->id >= 0) // Only process the operation if it is valid (!= -1)
+            enterprise_process_operation(p_op, enterp_id, data, &counter);
+    }
 }
 
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data) {
@@ -34,8 +28,6 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
 }
 
 void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter) {
-    data->enterprise_stats[enterp_id]++; // Increment the operationd counter
-
     op->receiving_enterp = enterp_id;
     if (*counter < data->max_ops) {
         op->status = 'E'; // Set status to "executed by enterprise" if the max number of operations has not been reached
