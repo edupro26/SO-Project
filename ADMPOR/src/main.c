@@ -80,8 +80,9 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
     printf("    status id - consultar o estado de uma operação\n");
     printf("    stop - termina a execução do AdmPor.\n");
     printf("    help - imprime informação sobre as ações disponíveis.\n");
-    
-    while (!(*data->terminate)) {
+    int run = 1;
+
+    while (run && !(*data->terminate)) {
         printf("Introduzir ação:\n");
         scanf("%s", command);
         if (strcmp(command, "op") == 0) {
@@ -109,6 +110,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
         } else if (strcmp(command, "status") == 0) {
             read_status(data);
         } else if (strcmp(command, "stop") == 0) {
+            run = 0;
             stop_execution(data, buffers);
         } else if (strcmp(command, "help") == 0) {
             printf("Ações disponíveis:\n");
