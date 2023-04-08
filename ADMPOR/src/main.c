@@ -166,12 +166,12 @@ void read_status(struct main_data* data) {
         } else if (status == 'I') {
             receiving_client = data->results[op_id].receiving_client;
             receiving_interm = data->results[op_id].receiving_interm;
-            printf("Pedido %d com estado I requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e processado pelo intermediário %d!", op_id, client_id, enterprise_id, receiving_client, receiving_interm);
+            printf("Pedido %d com estado I requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e processado pelo intermediário %d!\n", op_id, client_id, enterprise_id, receiving_client, receiving_interm);
         } else if (status == 'A' || status == 'E') {
             receiving_client = data->results[op_id].receiving_client;
             receiving_interm = data->results[op_id].receiving_interm;
             receiving_enterp = data->results[op_id].receiving_enterp;
-            printf("Pedido %d com estado A requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!", op_id, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
+            printf("Pedido %d com estado A requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!\n", op_id, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
         }
     } else{
         printf("Pedido %d ainda não é válido!\n", op_id);
