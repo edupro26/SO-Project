@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "process.h"
 #include "main.h"
@@ -80,13 +81,14 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
         scanf("%s", command);
         if (strcmp(command, "op") == 0) {
             create_request(&op_counter, buffers, data);
-            
+            sleep(0.5);
+
             char status;
             if(op_counter != 0)
                 status = data->results[op_counter - 1].status;
             else
                 status = data->results[0].status;
-
+            
             if(status == 'C'){
                 printf("Cliente recebeu pedido!\n");
             } 
@@ -175,17 +177,17 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
 void wait_processes(struct main_data* data) {
     // client processes
     for (int i = 0; i < data->n_clients; i++) {
-        wait_process(data->client_pids[i]);
+        data->client_stats[i] = wait_process(data->client_pids[i]);
     }
     
     // intermediary processes
     for (int i = 0; i < data->n_intermediaries; i++) {
-        wait_process(data->intermediary_pids[i]);
+        data->intermediary_stats[i] = wait_process(data->intermediary_pids[i]);
     }
     
     // enterprise processes
     for (int i = 0; i < data->n_enterprises; i++) {
-        wait_process(data->enterprise_pids[i]);
+        data->enterprise_stats[i] = wait_process(data->enterprise_pids[i]);
     }
 }
 
