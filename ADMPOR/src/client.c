@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "client.h"
 
@@ -13,10 +14,12 @@ int execute_client(int client_id, struct comm_buffers *buffers, struct main_data
         struct operation op;
         struct operation *p_op = &op;
         client_get_operation(p_op, client_id, buffers, data);
+        usleep(5000);
 
         if(p_op->id >= 0){ // Only process the operation if it is valid (!= -1)
             client_process_operation(p_op, client_id, data, &counter);
             client_send_operation(p_op, buffers, data);
+            printf("Cliente recebeu pedido!\n");
         }
     }
 }

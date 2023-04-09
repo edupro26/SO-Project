@@ -88,25 +88,6 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
         if (strcmp(command, "op") == 0) {
             create_request(&op_counter, buffers, data);
             usleep(100000);
-                    
-            char status;
-            if(op_counter != 0)
-                status = data->results[op_counter - 1].status;
-            else
-                status = data->results[0].status;
-            
-            if(status == 'C'){
-                printf("Cliente recebeu pedido!\n");
-            } 
-            if(status == 'I'){
-                printf("Cliente recebeu pedido!\n");
-                printf("Intermediário recebeu pedido!\n");
-            }
-            if(status == 'A' || status == 'E'){
-                printf("Cliente recebeu pedido!\n");
-                printf("Intermediário recebeu pedido!\n");
-                printf("Empresa recebeu pedido!\n");
-            }
         } else if (strcmp(command, "status") == 0) {
             read_status(data);
         } else if (strcmp(command, "stop") == 0) {

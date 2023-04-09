@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "enterprise.h"
 
@@ -13,9 +14,12 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
         struct operation op;
         struct operation* p_op = &op;
         enterprise_receive_operation(p_op, enterp_id, buffers, data);
+        usleep(5000);
 
-        if (p_op->id >= 0) // Only process the operation if it is valid (!= -1)
+        if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
             enterprise_process_operation(p_op, enterp_id, data, &counter);
+            printf("Empresa recebeu pedido!\n");
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "intermediary.h"
 
@@ -13,10 +14,12 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
         struct operation op;
         struct operation* p_op = &op;
         intermediary_receive_operation(p_op, buffers, data);
+        usleep(5000);
 
         if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
             intermediary_process_operation(p_op, interm_id, data, &counter);
             intermediary_send_answer(p_op, buffers, data);
+            printf("Intermediário recebeu pedido!\n");
         }
     }
 }
