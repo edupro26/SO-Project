@@ -7,22 +7,25 @@
 #include "main.h"
 
 void main_args(int argc, char* argv[], struct main_data* data){
-    int temp[5];
+    int error = 0, temp[5];
+    if (argc != 6) error = 1;
 
-    if (argc != 6) {
-        printf("Uso: admpor max_ops buffers_size n_clients n_intermediaries n_enterprises\nExemplo: ./bin/admpor 10 10 1 1 1\n");
-        exit(1);
-    }
-
-    for (int i = 1; i < argc; i++){
+    for (int i = 1; i < argc; i++) {
+        if(atoi(argv[i]) < 1) error = 1;
         temp[i-1] = atoi(argv[i]);
     }
 
-    data->max_ops = temp[0];
-    data->buffers_size = temp[1];
-    data->n_clients = temp[2];
-    data->n_intermediaries= temp[3];
-    data->n_enterprises = temp[4];
+    if (!error) {
+        data->max_ops = temp[0];
+        data->buffers_size = temp[1];
+        data->n_clients = temp[2];
+        data->n_intermediaries= temp[3];
+        data->n_enterprises = temp[4];
+    }
+    else {
+        printf("Uso: admpor max_ops buffers_size n_clients n_intermediaries n_enterprises\nExemplo: ./bin/admpor 10 10 1 1 1\n");
+        exit(1);
+    }
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
@@ -37,19 +40,16 @@ void create_dynamic_memory_buffers(struct main_data* data) {
 
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
     // main_client buffer
-    //buffers->main_client = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, sizeof(struct rnd_access_buffer));
     buffers->main_client->ptrs = (int*)create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, sizeof(int));
     buffers->main_client->buffer = (struct operation*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, sizeof(struct operation));
 
     // client_interm buffer
-    //buffers->client_interm = (struct circular_buffer*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, sizeof(struct circular_buffer));
     buffers->client_interm->ptrs = (struct pointers*)create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, sizeof(struct pointers));
     buffers->client_interm->ptrs->in = 0;
     buffers->client_interm->ptrs->out = 0;
     buffers->client_interm->buffer = (struct operation*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, sizeof(struct operation));
 
     // interm_enterp buffer
-    //buffers->interm_enterp = (struct rnd_access_buffer*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, sizeof(struct rnd_access_buffer));
     buffers->interm_enterp->ptrs = (int*)create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, sizeof(int));
     buffers->interm_enterp->buffer = (struct operation*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, sizeof(struct operation));
 
@@ -80,26 +80,30 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
     printf("    status id - consultar o estado de uma operação\n");
     printf("    stop - termina a execução do AdmPor.\n");
     printf("    help - imprime informação sobre as ações disponíveis.\n");
-    int run = 1;
 
-    while (run && !(*data->terminate)) {
+    while (1) {
         printf("Introduzir ação:\n");
         scanf("%s", command);
+
         if (strcmp(command, "op") == 0) {
             create_request(&op_counter, buffers, data);
             usleep(100000);
-        } else if (strcmp(command, "status") == 0) {
+        } 
+        else if (strcmp(command, "status") == 0) {
             read_status(data);
-        } else if (strcmp(command, "stop") == 0) {
-            run = 0;
+        } 
+        else if (strcmp(command, "stop") == 0) {
             stop_execution(data, buffers);
-        } else if (strcmp(command, "help") == 0) {
+            exit(1);
+        } 
+        else if (strcmp(command, "help") == 0) {
             printf("Ações disponíveis:\n");
             printf("    op client empresa - criar uma nova operação\n");
             printf("    status id - consultar o estado de uma operação\n");
             printf("    stop - termina a execução do AdmPor.\n");
             printf("    help - imprime informação sobre as ações disponíveis.\n");
-        } else {
+        } 
+        else {
             printf("Ação não reconhecida, insira 'help' para assistência..\n");
         }
     }
@@ -159,16 +163,10 @@ void read_status(struct main_data* data) {
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
     *(data->terminate) = 1;
-
     printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
-
     wait_processes(data);
     write_statistics(data);
-
-    //Needs fixing segmentation fault
-
     destroy_memory_buffers(data, buffers);
-
 }
 
 void wait_processes(struct main_data* data) {
