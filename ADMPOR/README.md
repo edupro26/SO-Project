@@ -6,7 +6,7 @@ Trabalho desenvolvido para o disciplina de Sistemas Operativos da Faculdade de C
 O programa ADMPOR é composto por 4 diretórios:
 
  - /bin - Onde se encontrará o executável com o nome **admpor** , depois do programa ser compilado.
- - /include - Ficheiro .h  com a definição das estruturas de dados e declarações de funções usadas.  Para além dos ficheiros fornecido foi acrescentado um ficheiro **private.h** com cabeçalhos de funções que foram desenvolvidas adicionalmente.
+ - /include - Ficheiro .h  com a definição das estruturas de dados e declarações de funções usadas.  Para além dos ficheiros fornecido foi acrescentado um ficheiro **main-private.h** com cabeçalhos de funções que foram desenvolvidas adicionalmente.
  - /obj - Aqui se entrarão os ficheiros objeto .o depois da compilação do programa.
  - /src - Ficheiros fonte .c com o código das funções desenvolvidas.
 
