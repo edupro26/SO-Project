@@ -15,8 +15,10 @@ Além destes 4 diretórios, é fornecido um ficheiro *Makefile* para a compilaç
 Para executar o programa, a seguir à compilação do mesmo, basta executar o ficheiro admpor gerado que se encontrará na pasta *bin* - **./bin/admpor**
 
 ### Trabalho realizado por:
-Diogo Peixoto - 53365
-Eduardo Proença - 57551
-Tiago Oliveira - 54979
 
-**Grupo 10**
+**Grupo 10** <br />
+Diogo Peixoto - 53365 <br />
+Eduardo Proença - 57551 <br />
+Tiago Oliveira - 54979 <br />
+
+#### Todas as funcionalidades pedidas foram implementadas no projeto.
