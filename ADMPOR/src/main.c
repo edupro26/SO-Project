@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "process.h"
 #include "main.h"
@@ -11,7 +12,9 @@ void main_args(int argc, char* argv[], struct main_data* data){
     if (argc != 6) error = 1;
 
     for (int i = 1; i < argc; i++) {
-        if(atoi(argv[i]) < 1) error = 1;
+        if(atoi(argv[i]) < 1) 
+            error = 1;
+
         temp[i-1] = atoi(argv[i]);
     }
 
@@ -29,13 +32,13 @@ void main_args(int argc, char* argv[], struct main_data* data){
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
-    data->client_pids = create_dynamic_memory(data->n_clients * sizeof(int));
-    data->intermediary_pids = create_dynamic_memory(data->n_intermediaries * sizeof(int));
-    data->enterprise_pids = create_dynamic_memory(data->n_enterprises * sizeof(int));
+    data->client_pids = create_dynamic_memory(sizeof(int));
+    data->intermediary_pids = create_dynamic_memory(sizeof(int));
+    data->enterprise_pids = create_dynamic_memory(sizeof(int));
     
-    data->client_stats = create_dynamic_memory(data->n_clients * sizeof(int));
-    data->intermediary_stats = create_dynamic_memory(data->n_intermediaries * sizeof(int));
-    data->enterprise_stats = create_dynamic_memory(data->n_enterprises * sizeof(int));
+    data->client_stats = create_dynamic_memory(sizeof(int));
+    data->intermediary_stats = create_dynamic_memory(sizeof(int));
+    data->enterprise_stats = create_dynamic_memory(sizeof(int));
 }
 
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
@@ -110,12 +113,17 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
 }
 
 void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data) {
-    char temp[0];
-    scanf("%s", temp);
-    int client_id = atoi(temp);
-    scanf("%s", temp);
-    int enterp_id = atoi(temp);
+    char id1[10], id2[10];
+    scanf("%s", id1);
+    int client_id = atoi(id1);
+    scanf("%s", id2);
+    int enterp_id = atoi(id2);
     
+    if(client_id < 0 || enterp_id < 0){
+        printf("id de cliente ou empresa inválido!\n");
+        return;
+    }
+
     struct operation op;
     op.id = *op_counter;
     op.requesting_client = client_id;
@@ -133,7 +141,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
 void read_status(struct main_data* data) {
     int op_id;
     scanf("%d", &op_id);
-    if (op_id < 0 || op_id >= 100) {
+    if (op_id < 0 || op_id >= MAX_RESULTS) {
         printf("id de pedido fornecido é inválido!\n"); 
         return;
     }
@@ -148,14 +156,18 @@ void read_status(struct main_data* data) {
         receiving_enterp = data->results[op_id].receiving_enterp;
         if (status == 'M') {
             printf("Pedido %d com estado %c requesitado pelo ciente %d à empresa %d\n", op_id, status, client_id, enterprise_id);
-        } else if (status == 'C') {
+        } 
+        else if (status == 'C') {
             printf("Pedido %d com estado %c requesitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d\n", op_id, status, client_id, enterprise_id, receiving_client);
-        } else if (status == 'I') {
+        } 
+        else if (status == 'I') {
             printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e processado pelo intermediário %d!\n", op_id, status, client_id, enterprise_id, receiving_client, receiving_interm);
-        } else if (status == 'A' || status == 'E') {
+        } 
+        else if (status == 'A' || status == 'E') {
             printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!\n", op_id, status, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
         }
-    } else {
+    } 
+    else {
         printf("Pedido %d ainda não é válido!\n", op_id);
         return;
     }
@@ -171,31 +183,27 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
 
 void wait_processes(struct main_data* data) {
     // client processes
-    for (int i = 0; i < data->n_clients; i++) {
+    for (int i = 0; i < data->n_clients; i++)
         data->client_stats[i] = wait_process(data->client_pids[i]);
-    }
     
     // intermediary processes
-    for (int i = 0; i < data->n_intermediaries; i++) {
+    for (int i = 0; i < data->n_intermediaries; i++)
         data->intermediary_stats[i] = wait_process(data->intermediary_pids[i]);
-    }
     
     // enterprise processes
-    for (int i = 0; i < data->n_enterprises; i++) {
+    for (int i = 0; i < data->n_enterprises; i++)
         data->enterprise_stats[i] = wait_process(data->enterprise_pids[i]);
-    }
 }
 
 void write_statistics(struct main_data* data) {
-    for (int i = 0; i < data->n_clients; i++) {
+    for (int i = 0; i < data->n_clients; i++)
         printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
-    }
-    for (int i = 0; i < data->n_intermediaries; i++) {
+
+    for (int i = 0; i < data->n_intermediaries; i++)
         printf("Intermidiário %d entregou %d pedidos!\n", i, data->intermediary_stats[i]);
-    }
-    for (int i = 0; i < data->n_enterprises; i++) {
+
+    for (int i = 0; i < data->n_enterprises; i++) 
         printf("Empresa %d recebeu %d pedidos!\n", i, data->enterprise_stats[i]);
-    }
 }
 
 void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
@@ -208,12 +216,12 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
     destroy_dynamic_memory(data->enterprise_stats);
 
     // Destroy shared memory
-    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client->ptrs, data->buffers_size);
-    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client->ptrs, sizeof(int));
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, sizeof(struct operation));
     destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm->ptrs, sizeof(struct pointers));
-    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, data->buffers_size * sizeof(struct operation));
-    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp->ptrs, sizeof(struct pointers));
-    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp->ptrs, sizeof(int));
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, sizeof(struct operation));
     destroy_shared_memory(STR_SHM_RESULTS, data->results, MAX_RESULTS * sizeof(struct operation));
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
 
