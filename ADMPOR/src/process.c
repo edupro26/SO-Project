@@ -1,3 +1,13 @@
+/* 
+
+Sistemas Operativos - Projeto Fase 1 
+Grupo 10
+Diogo Peixoto - 53365
+Eduardo Proença  - 57551
+Tiago Oliveira - 54979
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
