@@ -15,20 +15,38 @@ Tiago Oliveira - 54979
 #include <ctype.h>
 
 #include "process.h"
+#include "main-private.h"
 #include "main.h"
 
-void main_args(int argc, char* argv[], struct main_data* data){
-    int error = 0, temp[5];
-    if (argc != 6) error = 1;
-
-    for (int i = 1; i < argc; i++) {
-        if(atoi(argv[i]) < 1) 
-            error = 1;
-
-        temp[i-1] = atoi(argv[i]);
+int isNumber(char n[]) {
+    for (int i = 0; n[i] != 0; i++) {
+        if (!isdigit(n[i]))
+            return 0;
     }
 
-    if (!error) {
+    return 1;
+}
+
+int check_args(int argc, char* argv[]){
+    if (argc != 6) return 1;
+
+    for (int i = 1; i < argc; i++) {
+        if(!isNumber(argv[i]))
+            return 1;
+
+        if(atoi(argv[i]) < 1) 
+            return 1;
+    }
+
+    return 0;
+}
+
+void main_args(int argc, char* argv[], struct main_data* data) {
+    if (check_args(argc, argv) == 0) {
+        int temp[5];
+        for (int i = 1; i < argc; i++)
+            temp[i-1] = atoi(argv[i]);
+
         data->max_ops = temp[0];
         data->buffers_size = temp[1];
         data->n_clients = temp[2];
@@ -85,14 +103,18 @@ void launch_processes(struct comm_buffers* buffers, struct main_data* data) {
         data->enterprise_pids[i] = launch_enterp(i, buffers, data);
 }
 
-void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
-    char command[10];
-    int op_counter = 0;
+void print_help() {
     printf("Ações disponíveis:\n");
     printf("    op client empresa - criar uma nova operação\n");
     printf("    status id - consultar o estado de uma operação\n");
     printf("    stop - termina a execução do AdmPor.\n");
     printf("    help - imprime informação sobre as ações disponíveis.\n");
+}
+
+void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
+    char command[10];
+    int op_counter = 0;
+    print_help();
 
     while (1) {
         printf("Introduzir ação:\n");
@@ -110,11 +132,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
             exit(1);
         } 
         else if (strcmp(command, "help") == 0) {
-            printf("Ações disponíveis:\n");
-            printf("    op client empresa - criar uma nova operação\n");
-            printf("    status id - consultar o estado de uma operação\n");
-            printf("    stop - termina a execução do AdmPor.\n");
-            printf("    help - imprime informação sobre as ações disponíveis.\n");
+            print_help();
         } 
         else {
             printf("Ação não reconhecida, insira 'help' para assistência..\n");
@@ -122,17 +140,30 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
     }
 }
 
+int check_request(char id1[], char id2[]) {
+    if(!isNumber(id1) || !isNumber(id2))
+        return 1;
+    
+    int client_id = atoi(id1);
+    int enterp_id = atoi(id2);
+    if(client_id < 0 || enterp_id < 0)
+        return 1;
+
+    return 0;
+}
+
 void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data) {
     char id1[10], id2[10];
     scanf("%s", id1);
-    int client_id = atoi(id1);
     scanf("%s", id2);
-    int enterp_id = atoi(id2);
     
-    if(client_id < 0 || enterp_id < 0){
+    if(check_request(id1, id2) == 1){
         printf("id de cliente ou empresa inválido!\n");
         return;
     }
+
+    int client_id = atoi(id1);
+    int enterp_id = atoi(id2);
 
     struct operation op;
     op.id = *op_counter;
@@ -148,39 +179,63 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     (*op_counter)++;
 }
 
+void print_status(int id, struct main_data* data) {
+    int client_id = data->results[id].requesting_client;
+    int enterprise_id = data->results[id].requested_enterp;
+    int receiving_client = data->results[id].receiving_client;
+    int receiving_interm = data->results[id].receiving_interm;
+    int receiving_enterp = data->results[id].receiving_enterp;
+
+    char status = data->results[id].status;
+    switch (status) {
+    case 'M':
+        printf("Pedido %d com estado M requesitado pelo ciente %d à empresa %d\n", id, client_id, enterprise_id);
+        break;
+
+    case 'C':
+        printf("Pedido %d com estado C requesitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d\n", id, client_id, enterprise_id, receiving_client);
+        break;
+
+    case 'I':
+        printf("Pedido %d com estado I requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e processado pelo intermediário %d!\n", id, client_id, enterprise_id, receiving_client, receiving_interm);
+        break;
+
+    case 'A':
+        printf("Pedido %d com estado A requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!\n", id, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
+        break;
+
+    case 'E':
+        printf("Pedido %d com estado E requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!\n", id, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
+        break;
+
+    default:
+        printf("Pedido %d ainda não é válido!\n", id);
+        break;
+    }
+}
+
+int check_status(char id[]) {
+    if(!isNumber(id))
+        return 1;
+    
+    int op_id = atoi(id);
+    if(op_id < 0 || op_id >= MAX_RESULTS)
+        return 1;
+
+    return 0;
+}
+
 void read_status(struct main_data* data) {
-    int op_id;
-    scanf("%d", &op_id);
-    if (op_id < 0 || op_id >= MAX_RESULTS) {
+    char id[10];
+    scanf("%s", id);
+
+    if (check_status(id) == 1) {
         printf("id de pedido fornecido é inválido!\n"); 
         return;
     }
 
-    int receiving_client, receiving_interm, receiving_enterp;
-    char status = data->results[op_id].status;
-    if(status == 'M' || status == 'C' || status == 'I' || status == 'A' || status == 'E'){
-        int client_id = data->results[op_id].requesting_client;
-        int enterprise_id = data->results[op_id].requested_enterp;
-        receiving_client = data->results[op_id].receiving_client;
-        receiving_interm = data->results[op_id].receiving_interm;
-        receiving_enterp = data->results[op_id].receiving_enterp;
-        if (status == 'M') {
-            printf("Pedido %d com estado %c requesitado pelo ciente %d à empresa %d\n", op_id, status, client_id, enterprise_id);
-        } 
-        else if (status == 'C') {
-            printf("Pedido %d com estado %c requesitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d\n", op_id, status, client_id, enterprise_id, receiving_client);
-        } 
-        else if (status == 'I') {
-            printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d e processado pelo intermediário %d!\n", op_id, status, client_id, enterprise_id, receiving_client, receiving_interm);
-        } 
-        else if (status == 'A' || status == 'E') {
-            printf("Pedido %d com estado %c requisitado pelo cliente %d à empresa %d, foi recebido pelo cliente %d, processado pelo intermediário %d, e tratado pela empresa %d!\n", op_id, status, client_id, enterprise_id, receiving_client, receiving_interm, receiving_enterp);
-        }
-    } 
-    else {
-        printf("Pedido %d ainda não é válido!\n", op_id);
-        return;
-    }
+    int op_id = atoi(id);
+    print_status(op_id, data);
 }
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers) {

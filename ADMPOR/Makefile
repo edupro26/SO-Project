@@ -1,6 +1,6 @@
 OBJ_dir = obj
 OBJECTS = main.o memory.o process.o client.o intermediary.o enterprise.o
-main.o = main.h process.h
+main.o = main.h main-private.h process.h
 memory.o = memory.h
 process.o = process.h client.h intermediary.h enterprise.h
 client.o = client.h
