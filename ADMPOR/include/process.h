@@ -8,21 +8,21 @@
 * processo irá executar a função execute_client respetiva, fazendo exit do retorno.
 * O processo pai devolve o pid do processo criado.
 */
-int launch_client(int client_id, struct comm_buffers* buffers, struct main_data* data);
+int launch_client(int client_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 
 /* Função que inicia um novo processo intermediário através da função fork do SO. O novo
 * processo irá executar a função execute_intermediary, fazendo exit do retorno.
 * O processo pai devolve o pid do processo criado.
 */
-int launch_interm(int interm_id, struct comm_buffers* buffers, struct main_data* data);
+int launch_interm(int interm_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 
 /* Função que inicia um novo processo empresa através da função fork do SO. O novo
 * processo irá executar a função execute_enterprise, fazendo exit do retorno.
 * O processo pai devolve o pid do processo criado.
 */
-int launch_enterp(int enterp_id, struct comm_buffers* buffers, struct main_data* data);
+int launch_enterp(int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 
 /* Função que espera que um processo termine através da função waitpid. 

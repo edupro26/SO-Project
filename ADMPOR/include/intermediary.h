@@ -13,26 +13,26 @@
 * número de operações processadas. Para efetuar estes passos, pode usar os
 * outros métodos auxiliares definidos em intermediary.h.
 */
-int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data);
+int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 
 /* Função que lê uma operação do buffer de memória partilhada entre clientes e intermediários.
 * Antes de tentar ler a operação, deve verificar se data->terminate tem valor 1.
 * Em caso afirmativo, retorna imediatamente da função.
 */
-void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data);
+void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 
 /* Função que processa uma operação, alterando o seu campo receiving_intermediary para o id
 * passado como argumento, alterando o estado da mesma para 'I' (intermediary), e 
 * incrementando o contador de operações. Atualiza também a operação na estrutura data.
 */
-void intermediary_process_operation(struct operation* op, int interm_id, struct main_data* data, int* counter);
+void intermediary_process_operation(struct operation* op, int interm_id, struct main_data* data, int* counter, struct semaphores* sems);
 
 
 /* Função que escreve uma operação no buffer de memória partilhada entre
 * intermediários e empresas.
 */
-void intermediary_send_answer(struct operation* op, struct comm_buffers* buffers, struct main_data* data);
+void intermediary_send_answer(struct operation* op, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 #endif

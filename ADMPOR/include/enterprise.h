@@ -11,7 +11,7 @@
 * número de operações processadas. Para efetuar estes passos, pode usar os outros
 * métodos auxiliares definidos em enterprise.h.
 */
-int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data);
+int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 
 /* Função que lê uma operação do buffer de memória partilhada entre
@@ -19,7 +19,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 * Antes de tentar ler a operação, o processo deve verificar se data->terminate
 * tem valor 1. Em caso afirmativo, retorna imediatamente da função.
 */
-void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data);
+void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems);
 
 
 /* Função que processa uma operação, alterando o seu campo receiving_enterp para o id
@@ -27,6 +27,6 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
 * máximo de operações já tiver sido atingido ou não, e incrementando o contador de operações.
 * Atualiza também a operação na estrutura data.
 */
-void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter);
+void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter, struct semaphores* sems);
 
 #endif
