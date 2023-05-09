@@ -19,14 +19,14 @@ Tiago Oliveira - 54979
 #include "intermediary.h"
 #include "enterprise.h"
 
-int launch_client(int client_id, struct comm_buffers* buffers, struct main_data* data){
+int launch_client(int client_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     pid_t pid = fork();
     if(pid == -1){
         perror("launch error");
         exit(1);
     }
     if(pid == 0){
-        int client = execute_client(client_id, buffers, data);
+        int client = execute_client(client_id, buffers, data, sems);
         exit(client);
     }
     else{
@@ -34,14 +34,14 @@ int launch_client(int client_id, struct comm_buffers* buffers, struct main_data*
     }
 }
 
-int launch_interm(int interm_id, struct comm_buffers* buffers, struct main_data* data){
+int launch_interm(int interm_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     pid_t pid = fork();
     if(pid == -1){
         perror("launch error");
         exit(1);
     }
     if(pid == 0){
-        int interm = execute_intermediary(interm_id, buffers, data);
+        int interm = execute_intermediary(interm_id, buffers, data, sems);
         exit(interm);
     }
     else{
@@ -49,14 +49,14 @@ int launch_interm(int interm_id, struct comm_buffers* buffers, struct main_data*
     }
 }
 
-int launch_enterp(int enterp_id, struct comm_buffers* buffers, struct main_data* data){
+int launch_enterp(int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     pid_t pid = fork();
     if(pid == -1){
         perror("launch error");
         exit(1);
     }
     if(pid == 0){
-        int enterp = execute_enterprise(enterp_id, buffers, data);
+        int enterp = execute_enterprise(enterp_id, buffers, data, sems);
         exit(enterp);
     }
     else{

@@ -92,7 +92,7 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
     *data->terminate = 0;
 }
 
-void launch_processes(struct comm_buffers* buffers, struct main_data* data) {
+void launch_processes(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     for(int i = 0; i < data->n_clients; i++)
         data->client_pids[i] = launch_client(i, buffers, data);
 
@@ -111,7 +111,7 @@ void print_help() {
     printf("    help - imprime informação sobre as ações disponíveis.\n");
 }
 
-void user_interaction(struct comm_buffers* buffers, struct main_data* data) {
+void user_interaction(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     char command[10];
     int op_counter = 0;
     print_help();
@@ -152,7 +152,7 @@ int check_request(char id1[], char id2[]) {
     return 0;
 }
 
-void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data) {
+void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     char id1[10], id2[10];
     scanf("%s", id1);
     scanf("%s", id2);
@@ -225,7 +225,7 @@ int check_status(char id[]) {
     return 0;
 }
 
-void read_status(struct main_data* data) {
+void read_status(struct main_data* data, struct semaphores* sems) {
     char id[10];
     scanf("%s", id);
 
@@ -238,7 +238,7 @@ void read_status(struct main_data* data) {
     print_status(op_id, data);
 }
 
-void stop_execution(struct main_data* data, struct comm_buffers* buffers) {
+void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct semaphores* sems) {
     *(data->terminate) = 1;
     printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
     wait_processes(data);
@@ -289,32 +289,52 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
     destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, sizeof(struct operation));
     destroy_shared_memory(STR_SHM_RESULTS, data->results, MAX_RESULTS * sizeof(struct operation));
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
+}
 
+void create_semaphores(struct main_data* data, struct semaphores* sems) {
+    //TODO
+}
+
+void wakeup_processes(struct main_data* data, struct semaphores* sems) {
+    //TODO
+}
+
+void destroy_semaphores(struct semaphores* sems) {
+    //TODO
 }
 
 int main(int argc, char *argv[]) {
-    // init data structures
-    struct main_data *data = create_dynamic_memory(sizeof(struct main_data));
-    struct comm_buffers *buffers = create_dynamic_memory(sizeof(struct comm_buffers));
+    //init data structures
+    struct main_data* data = create_dynamic_memory(sizeof(struct main_data));
+    struct comm_buffers* buffers = create_dynamic_memory(sizeof(struct comm_buffers));
     buffers->main_client = create_dynamic_memory(sizeof(struct rnd_access_buffer));
     buffers->client_interm = create_dynamic_memory(sizeof(struct circular_buffer));
-    buffers->interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
+    buffers-> interm_enterp = create_dynamic_memory(sizeof(struct rnd_access_buffer));
 
-    // execute main code
+    // init semaphore data structure
+    struct semaphores* sems = create_dynamic_memory(sizeof(struct semaphores));
+    sems->main_client = create_dynamic_memory(sizeof(struct prodcons));
+    sems->client_interm = create_dynamic_memory(sizeof(struct prodcons));
+    sems->interm_enterp = create_dynamic_memory(sizeof(struct prodcons));
+
+    //execute main code
     main_args(argc, argv, data);
     create_dynamic_memory_buffers(data);
     create_shared_memory_buffers(data, buffers);
-    launch_processes(buffers, data);
-    user_interaction(buffers, data);
+    create_semaphores(data, sems);
+    launch_processes(buffers, data, sems);
+    user_interaction(buffers, data, sems);
 
-    // release memory before terminating
+    //release memory before terminating
     destroy_dynamic_memory(data);
     destroy_dynamic_memory(buffers->main_client);
     destroy_dynamic_memory(buffers->client_interm);
     destroy_dynamic_memory(buffers->interm_enterp);
     destroy_dynamic_memory(buffers);
-
-    
+    destroy_dynamic_memory(sems->main_client);
+    destroy_dynamic_memory(sems->client_interm);
+    destroy_dynamic_memory(sems->interm_enterp);
+    destroy_dynamic_memory(sems);
 
     return 0;
 }
