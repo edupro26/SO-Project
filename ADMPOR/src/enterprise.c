@@ -44,7 +44,7 @@ void enterprise_receive_operation(struct operation* op, int enterp_id, struct co
 
 void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter, struct semaphores* sems) {
     op->receiving_enterp = enterp_id;
-    if (*counter < data->max_ops) {
+    if (op->id < data->max_ops) {
         op->status = 'E'; // Set status to "executed by enterprise" if the max number of operations has not been reached
     } else {
         op->status = 'A'; // Set status to "scheduled by enterprise" if the max number of operations has been reached
