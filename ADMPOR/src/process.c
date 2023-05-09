@@ -14,6 +14,7 @@ Tiago Oliveira - 54979
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "synchronization.h"
 #include "process.h"
 #include "client.h"
 #include "intermediary.h"

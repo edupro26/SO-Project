@@ -23,9 +23,9 @@ struct prodcons {
 
 //estrutura que agrega informação de todos os semáforos necessários pelo socps
 struct semaphores {
-	struct prodcons *main_cli;	// semáforos para acesso ao buffer entre a main e clientes
-	struct prodcons *cli_intermed; // semáforos para acesso ao buffer entre clientes e intermediários
-	struct prodcons *intermed_enterp; 	// semáforos para acesso ao buffer entre intermediários e empresas
+	struct prodcons *main_client;	// semáforos para acesso ao buffer entre a main e clientes
+	struct prodcons *client_interm; // semáforos para acesso ao buffer entre clientes e intermediários
+	struct prodcons *interm_enterp; 	// semáforos para acesso ao buffer entre intermediários e empresas
 	sem_t *results_mutex;		//v2 semáforo para exclusão mútua no acesso ao array de resultados
 };
 

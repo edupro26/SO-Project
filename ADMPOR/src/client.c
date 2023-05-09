@@ -13,6 +13,7 @@ Tiago Oliveira - 54979
 #include <string.h>
 #include <unistd.h>
 
+#include "synchronization.h"
 #include "client.h"
 
 int execute_client(int client_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {  

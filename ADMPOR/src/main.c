@@ -14,6 +14,7 @@ Tiago Oliveira - 54979
 #include <unistd.h>
 #include <ctype.h>
 
+#include "synchronization.h"
 #include "process.h"
 #include "main-private.h"
 #include "main.h"
@@ -94,13 +95,13 @@ void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* b
 
 void launch_processes(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     for(int i = 0; i < data->n_clients; i++)
-        data->client_pids[i] = launch_client(i, buffers, data);
+        data->client_pids[i] = launch_client(i, buffers, data, sems);
 
     for(int i = 0; i < data->n_intermediaries; i++)
-        data->intermediary_pids[i] = launch_interm(i, buffers, data);
+        data->intermediary_pids[i] = launch_interm(i, buffers, data, sems);
 
     for(int i = 0; i < data->n_enterprises; i++)
-        data->enterprise_pids[i] = launch_enterp(i, buffers, data);
+        data->enterprise_pids[i] = launch_enterp(i, buffers, data, sems);
 }
 
 void print_help() {
@@ -121,14 +122,14 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
         scanf("%s", command);
 
         if (strcmp(command, "op") == 0) {
-            create_request(&op_counter, buffers, data);
+            create_request(&op_counter, buffers, data, sems);
             usleep(100000);
         } 
         else if (strcmp(command, "status") == 0) {
-            read_status(data);
+            read_status(data, sems);
         } 
         else if (strcmp(command, "stop") == 0) {
-            stop_execution(data, buffers);
+            stop_execution(data, buffers, sems);
             exit(1);
         } 
         else if (strcmp(command, "help") == 0) {

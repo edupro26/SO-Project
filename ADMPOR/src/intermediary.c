@@ -13,6 +13,7 @@ Tiago Oliveira - 54979
 #include <string.h>
 #include <unistd.h>
 
+#include "synchronization.h"
 #include "intermediary.h"
 
 int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
