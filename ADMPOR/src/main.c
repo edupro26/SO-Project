@@ -293,6 +293,19 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
 }
 
 void create_semaphores(struct main_data* data, struct semaphores* sems) {
+    sems->main_client->full = semaphore_create(STR_SEM_MAIN_CLIENT_FULL, 0);
+    sems->client_interm->full = semaphore_create(STR_SEM_CLIENT_INTERM_FULL, 0);
+    sems->interm_enterp->full = semaphore_create(STR_SEM_INTERM_ENTERP_FULL, 0);
+
+    sems->main_client->empty = semaphore_create(STR_SEM_MAIN_CLIENT_EMPTY, sizeof(struct comm_buffers));
+    sems->client_interm->empty = semaphore_create(STR_SEM_CLIENT_INTERM_EMPTY, sizeof(struct comm_buffers));
+    sems->interm_enterp->empty = semaphore_create(STR_SEM_INTERM_ENTERP_EMPTY, sizeof(struct comm_buffers));
+
+    sems->main_client->mutex = semaphore_create(STR_SEM_MAIN_CLIENT_MUTEX, 1);
+    sems->client_interm->mutex = semaphore_create(STR_SEM_CLIENT_INTERM_MUTEX, 1);
+    sems->interm_enterp->mutex = semaphore_create(STR_SEM_INTERM_ENTERP_MUTEX, 1);
+
+    sems->results_mutex = semaphore_create(STR_SEM_RESULTS_MUTEX, 1);
     //TODO
 }
 
