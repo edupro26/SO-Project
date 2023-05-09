@@ -26,6 +26,7 @@ struct semaphores {
 	struct prodcons *main_cli;	// semáforos para acesso ao buffer entre a main e clientes
 	struct prodcons *cli_intermed; // semáforos para acesso ao buffer entre clientes e intermediários
 	struct prodcons *intermed_enterp; 	// semáforos para acesso ao buffer entre intermediários e empresas
+	sem_t *results_mutex;		//v2 semáforo para exclusão mútua no acesso ao array de resultados
 };
 
 /* Função que cria um novo semáforo com nome name e valor inicial igual a
