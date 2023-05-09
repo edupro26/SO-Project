@@ -61,29 +61,29 @@ void main_args(int argc, char* argv[], struct main_data* data) {
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
-    data->client_pids = create_dynamic_memory(sizeof(int));
-    data->intermediary_pids = create_dynamic_memory(sizeof(int));
-    data->enterprise_pids = create_dynamic_memory(sizeof(int));
+    data->client_pids = create_dynamic_memory(data->n_clients);
+    data->intermediary_pids = create_dynamic_memory(data->n_intermediaries);
+    data->enterprise_pids = create_dynamic_memory(data->n_enterprises);
     
-    data->client_stats = create_dynamic_memory(sizeof(int));
-    data->intermediary_stats = create_dynamic_memory(sizeof(int));
-    data->enterprise_stats = create_dynamic_memory(sizeof(int));
+    data->client_stats = create_dynamic_memory(data->n_clients);
+    data->intermediary_stats = create_dynamic_memory(data->n_intermediaries);
+    data->enterprise_stats = create_dynamic_memory(data->n_enterprises);
 }
 
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
     // main_client buffer
-    buffers->main_client->ptrs = (int*)create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, sizeof(int));
-    buffers->main_client->buffer = (struct operation*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, sizeof(struct operation));
+    buffers->main_client->ptrs = (int*)create_shared_memory(STR_SHM_MAIN_CLIENT_PTR, data->buffers_size * sizeof(int));
+    buffers->main_client->buffer = (struct operation*)create_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, data->buffers_size * sizeof(struct operation));
 
     // client_interm buffer
-    buffers->client_interm->ptrs = (struct pointers*)create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, sizeof(struct pointers));
+    buffers->client_interm->ptrs = (struct pointers*)create_shared_memory(STR_SHM_CLIENT_INTERM_PTR, data->buffers_size * sizeof(struct pointers));
     buffers->client_interm->ptrs->in = 0;
     buffers->client_interm->ptrs->out = 0;
-    buffers->client_interm->buffer = (struct operation*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, sizeof(struct operation));
+    buffers->client_interm->buffer = (struct operation*)create_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, data->buffers_size * sizeof(struct operation));
 
     // interm_enterp buffer
-    buffers->interm_enterp->ptrs = (int*)create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, sizeof(int));
-    buffers->interm_enterp->buffer = (struct operation*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, sizeof(struct operation));
+    buffers->interm_enterp->ptrs = (int*)create_shared_memory(STR_SHM_INTERM_ENTERP_PTR, data->buffers_size * sizeof(int));
+    buffers->interm_enterp->buffer = (struct operation*)create_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, data->buffers_size * sizeof(struct operation));
 
     // results array
     data->results = (struct operation*)create_shared_memory(STR_SHM_RESULTS, sizeof(struct operation) * MAX_RESULTS);
@@ -282,12 +282,12 @@ void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers
     destroy_dynamic_memory(data->enterprise_stats);
 
     // Destroy shared memory
-    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client->ptrs, sizeof(int));
-    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, sizeof(struct operation));
-    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm->ptrs, sizeof(struct pointers));
-    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, sizeof(struct operation));
-    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp->ptrs, sizeof(int));
-    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_PTR, buffers->main_client->ptrs, data->buffers_size * sizeof(int));
+    destroy_shared_memory(STR_SHM_MAIN_CLIENT_BUFFER, buffers->main_client->buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_PTR, buffers->client_interm->ptrs, data->buffers_size * sizeof(struct pointers));
+    destroy_shared_memory(STR_SHM_CLIENT_INTERM_BUFFER, buffers->client_interm->buffer, data->buffers_size * sizeof(struct operation));
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_PTR, buffers->interm_enterp->ptrs, data->buffers_size * sizeof(int));
+    destroy_shared_memory(STR_SHM_INTERM_ENTERP_BUFFER, buffers->interm_enterp->buffer, data->buffers_size * sizeof(struct operation));
     destroy_shared_memory(STR_SHM_RESULTS, data->results, MAX_RESULTS * sizeof(struct operation));
     destroy_shared_memory(STR_SHM_TERMINATE, data->terminate, sizeof(int));
 }

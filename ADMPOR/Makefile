@@ -7,7 +7,7 @@ client.o = client.h synchronization.h
 intermediary.o = intermediary.h synchronization.h
 enterprise.o = enterprise.h synchronization.h
 synchronization.o = synchronization.h
-CFLAGS = -Wall
+CFLAGS = -Wall -Wextra
 CC = gcc
 
 admpor: $(OBJECTS)
