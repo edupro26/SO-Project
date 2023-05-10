@@ -306,15 +306,33 @@ void create_semaphores(struct main_data* data, struct semaphores* sems) {
     sems->interm_enterp->mutex = semaphore_create(STR_SEM_INTERM_ENTERP_MUTEX, 1);
 
     sems->results_mutex = semaphore_create(STR_SEM_RESULTS_MUTEX, 1);
-    //TODO
 }
 
 void wakeup_processes(struct main_data* data, struct semaphores* sems) {
-    //TODO
+    for (int i = 0; i < data->n_clients; i++)
+        produce_end(sems->main_client);
+
+    for (int i = 0; i < data->n_intermediaries; i++)
+        produce_end(sems->client_interm);
+    
+    for (int i = 0; i < data->n_enterprises; i++)
+        produce_end(sems->interm_enterp);
 }
 
 void destroy_semaphores(struct semaphores* sems) {
-    //TODO
+    semaphore_destroy(STR_SEM_MAIN_CLIENT_FULL, sems->main_client->full);
+    semaphore_destroy(STR_SEM_CLIENT_INTERM_FULL, sems->client_interm->full);
+    semaphore_destroy(STR_SEM_INTERM_ENTERP_FULL, sems->interm_enterp->full);
+
+    semaphore_destroy(STR_SEM_MAIN_CLIENT_EMPTY, sems->main_client->empty);
+    semaphore_destroy(STR_SEM_CLIENT_INTERM_EMPTY, sems->client_interm->empty);
+    semaphore_destroy(STR_SEM_INTERM_ENTERP_EMPTY, sems->interm_enterp->empty);
+
+    semaphore_destroy(STR_SEM_MAIN_CLIENT_MUTEX, sems->main_client->mutex);
+    semaphore_destroy(STR_SEM_CLIENT_INTERM_MUTEX, sems->client_interm->mutex);
+    semaphore_destroy(STR_SEM_INTERM_ENTERP_MUTEX, sems->interm_enterp->mutex);
+
+    semaphore_destroy(STR_SEM_RESULTS_MUTEX, sems->results_mutex);
 }
 
 int main(int argc, char *argv[]) {
