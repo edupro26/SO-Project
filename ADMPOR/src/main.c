@@ -18,6 +18,11 @@ Tiago Oliveira - 54979
 #include "process.h"
 #include "main-private.h"
 #include "main.h"
+#include "stats.h"
+
+char* log_file_name;
+char* stat_file_name;
+
 
 int isNumber(char n[]) {
     for (int i = 0; n[i] != 0; i++) {
@@ -247,6 +252,11 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
     destroy_memory_buffers(data, buffers);
 }
 
+void write_statistics(struct main_data* data) {
+    int num_ops = 0; // TODO - get number of operations
+    write_statistics_to_file(data->client_stats, num_ops, stat_file_name);
+}
+
 void wait_processes(struct main_data* data) {
     // client processes
     for (int i = 0; i < data->n_clients; i++)
@@ -259,36 +269,6 @@ void wait_processes(struct main_data* data) {
     // enterprise processes
     for (int i = 0; i < data->n_enterprises; i++)
         data->enterprise_stats[i] = wait_process(data->enterprise_pids[i]);
-}
-
-void write_statistics(struct main_data* data) {
-    for (int i = 0; i < data->n_clients; i++)
-        printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
-
-    for (int i = 0; i < data->n_intermediaries; i++)
-        printf("Intermidiário %d entregou %d pedidos!\n", i, data->intermediary_stats[i]);
-
-    for (int i = 0; i < data->n_enterprises; i++) 
-        printf("Empresa %d recebeu %d pedidos!\n", i, data->enterprise_stats[i]);
-}
-
-void write_statistics_to_file(struct main_data* data, char *filename) {
-    FILE *file = fopen(filename, "w");
-    if (file == NULL) {
-        perror("Unable to open file");
-        return;
-    }
-
-    for (int i = 0; i < data->n_clients; i++)
-        fprintf(file, "Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
-
-    for (int i = 0; i < data->n_intermediaries; i++)
-        fprintf(file, "Intermidiário %d entregou %d pedidos!\n", i, data->intermediary_stats[i]);
-
-    for (int i = 0; i < data->n_enterprises; i++) 
-        fprintf(file, "Empresa %d recebeu %d pedidos!\n", i, data->enterprise_stats[i]);
-
-    fclose(file);
 }
 
 void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {

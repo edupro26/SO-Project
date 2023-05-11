@@ -5,7 +5,7 @@
 #include "main.h";
 
 
-void write_statistics(struct main_data* data, int num_ops, char* filename){
+void write_statistics_to_file(struct main_data* data, int num_ops, char* filename){
     stats_file = fopen(filename, "w");
 
     if(stats_file == NULL){
