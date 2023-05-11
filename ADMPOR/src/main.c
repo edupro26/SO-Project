@@ -272,6 +272,25 @@ void write_statistics(struct main_data* data) {
         printf("Empresa %d recebeu %d pedidos!\n", i, data->enterprise_stats[i]);
 }
 
+void write_statistics_to_file(struct main_data* data, char *filename) {
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        perror("Unable to open file");
+        return;
+    }
+
+    for (int i = 0; i < data->n_clients; i++)
+        fprintf(file, "Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
+
+    for (int i = 0; i < data->n_intermediaries; i++)
+        fprintf(file, "Intermidiário %d entregou %d pedidos!\n", i, data->intermediary_stats[i]);
+
+    for (int i = 0; i < data->n_enterprises; i++) 
+        fprintf(file, "Empresa %d recebeu %d pedidos!\n", i, data->enterprise_stats[i]);
+
+    fclose(file);
+}
+
 void destroy_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
     // Destroy dynamic memory
     destroy_dynamic_memory(data->client_pids);
