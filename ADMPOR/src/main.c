@@ -20,8 +20,8 @@ Tiago Oliveira - 54979
 #include "main.h"
 #include "stats.h"
 
-char* log_file_name;
-char* stat_file_name;
+// char* log_file_name;
+// char* stat_file_name;
 
 
 int isNumber(char n[]) {
@@ -253,8 +253,17 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
 }
 
 void write_statistics(struct main_data* data) {
-    int num_ops = 0; // TODO - get number of operations
-    write_statistics_to_file(data->client_stats, num_ops, stat_file_name);
+    // int num_ops = 0; // TODO - get number of operations
+    // write_statistics_to_file(data->client_stats, num_ops, stat_file_name);
+
+    for (int i = 0; i < data->n_clients; i++)
+        printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
+
+    for (int i = 0; i < data->n_intermediaries; i++)
+        printf("Intermidiário %d entregou %d pedidos!\n", i, data->intermediary_stats[i]);
+
+    for (int i = 0; i < data->n_enterprises; i++) 
+        printf("Empresa %d recebeu %d pedidos!\n", i, data->enterprise_stats[i]);
 }
 
 void wait_processes(struct main_data* data) {
