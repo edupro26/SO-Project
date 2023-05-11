@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <log.h>
+#include "log.h"
 
 FILE *log_file;
 
