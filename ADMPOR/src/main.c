@@ -177,8 +177,8 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     op.requested_enterp = enterp_id;
     op.status = 'M';
 
-    data->results[*op_counter] = op;
     struct operation *p_op = &op;
+    produce_begin(sems->main_client);
     write_main_client_buffer(buffers->main_client, data->buffers_size, p_op);
 
     printf("O pedido #%d foi criado \n", *op_counter);
@@ -241,14 +241,19 @@ void read_status(struct main_data* data, struct semaphores* sems) {
     }
 
     int op_id = atoi(id);
+    semaphore_mutex_lock(sems->results_mutex);
     print_status(op_id, data);
+    semaphore_mutex_unlock(sems->results_mutex);
 }
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct semaphores* sems) {
     *(data->terminate) = 1;
     printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
+    
+    wakeup_processes(data, sems);
     wait_processes(data);
     write_statistics(data);
+    destroy_semaphores(sems);
     destroy_memory_buffers(data, buffers);
 }
 
@@ -305,9 +310,9 @@ void create_semaphores(struct main_data* data, struct semaphores* sems) {
     sems->client_interm->full = semaphore_create(STR_SEM_CLIENT_INTERM_FULL, 0);
     sems->interm_enterp->full = semaphore_create(STR_SEM_INTERM_ENTERP_FULL, 0);
 
-    sems->main_client->empty = semaphore_create(STR_SEM_MAIN_CLIENT_EMPTY, sizeof(struct comm_buffers));
-    sems->client_interm->empty = semaphore_create(STR_SEM_CLIENT_INTERM_EMPTY, sizeof(struct comm_buffers));
-    sems->interm_enterp->empty = semaphore_create(STR_SEM_INTERM_ENTERP_EMPTY, sizeof(struct comm_buffers));
+    sems->main_client->empty = semaphore_create(STR_SEM_MAIN_CLIENT_EMPTY, data->buffers_size);
+    sems->client_interm->empty = semaphore_create(STR_SEM_CLIENT_INTERM_EMPTY, data->buffers_size);
+    sems->interm_enterp->empty = semaphore_create(STR_SEM_INTERM_ENTERP_EMPTY, data->buffers_size);
 
     sems->main_client->mutex = semaphore_create(STR_SEM_MAIN_CLIENT_MUTEX, 1);
     sems->client_interm->mutex = semaphore_create(STR_SEM_CLIENT_INTERM_MUTEX, 1);

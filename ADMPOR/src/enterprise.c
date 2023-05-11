@@ -24,25 +24,28 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 
         struct operation op;
         struct operation* p_op = &op;
+
+        produce_end(sems->interm_enterp);
         enterprise_receive_operation(p_op, enterp_id, buffers, data, sems);
-        usleep(5000);
 
         if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
-            enterprise_process_operation(p_op, enterp_id, data, &counter, sems);
             printf("Empresa recebeu pedido!\n");
+            enterprise_process_operation(p_op, enterp_id, data, &counter, sems);
         }
     }
 }
 
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     if (!(*data->terminate)) {
+        consume_begin(sems->interm_enterp);
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
+        consume_end(sems->interm_enterp);
     }
-
     return;
 }
 
 void enterprise_process_operation(struct operation* op, int enterp_id, struct main_data* data, int* counter, struct semaphores* sems) {
+    semaphore_mutex_lock(sems->results_mutex);
     op->receiving_enterp = enterp_id;
     if (op->id < data->max_ops) {
         op->status = 'E'; // Set status to "executed by enterprise" if the max number of operations has not been reached
@@ -53,4 +56,5 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
 
     int idx = op->id % MAX_RESULTS;
     data->results[idx] = *op;
+    semaphore_mutex_unlock(sems->results_mutex);
 }
