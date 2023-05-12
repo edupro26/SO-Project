@@ -18,10 +18,7 @@ Tiago Oliveira - 54979
 #include "process.h"
 #include "main-private.h"
 #include "main.h"
-#include "stats.h"
-
-// char* log_file_name;
-// char* stat_file_name;
+//#include "stats.h"
 
 
 int isNumber(char n[]) {

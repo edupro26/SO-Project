@@ -11,6 +11,9 @@ struct main_data {
 	int n_clients;			//número de clientes
 	int n_intermediaries;	//número de intermediários
 	int n_enterprises;		//número de empresas
+
+	char* log_file_name;		//nome do ficheiro log
+	char* stats_file_name;		//nome do ficheiro stats
 	
 	int *client_pids;			//process ids de clientes
 	int *intermediary_pids;		//process ids de intermediários
