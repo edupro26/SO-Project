@@ -18,6 +18,7 @@ Tiago Oliveira - 54979
 #include "process.h"
 #include "main-private.h"
 #include "main.h"
+#include "apsignal.h"
 //#include "stats.h"
 
 
@@ -361,6 +362,7 @@ int main(int argc, char *argv[]) {
     sems->interm_enterp = create_dynamic_memory(sizeof(struct prodcons));
 
     //execute main code
+    ctrlC(data, buffers, sems);
     main_args(argc, argv, data);
     create_dynamic_memory_buffers(data);
     create_shared_memory_buffers(data, buffers);
