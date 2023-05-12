@@ -1,12 +1,13 @@
 OBJ_dir = obj
-OBJECTS = main.o memory.o process.o client.o intermediary.o enterprise.o synchronization.o
-main.o = main.h main-private.h process.h synchronization.h
+OBJECTS = main.o memory.o process.o client.o intermediary.o enterprise.o synchronization.o configuration.o
+main.o = main.h main-private.h process.h configuration.h
 memory.o = memory.h
 process.o = process.h client.h intermediary.h enterprise.h synchronization.h
 client.o = client.h synchronization.h
 intermediary.o = intermediary.h synchronization.h
 enterprise.o = enterprise.h synchronization.h
 synchronization.o = synchronization.h
+configuration.o = configuration.h
 CFLAGS = -Wall -Wextra
 CC = gcc
 

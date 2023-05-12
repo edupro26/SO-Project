@@ -14,7 +14,7 @@ Tiago Oliveira - 54979
 #include <unistd.h>
 #include <ctype.h>
 
-#include "synchronization.h"
+#include "configuration.h"
 #include "process.h"
 #include "main-private.h"
 #include "main.h"
