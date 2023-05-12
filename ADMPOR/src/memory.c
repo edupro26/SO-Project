@@ -38,14 +38,14 @@ void* create_shared_memory(char* name, int size) {
 }
 
 void* create_dynamic_memory(int size){
-    void *ptr = malloc(size * sizeof(int));
+    void *ptr = malloc(size);
 
     if(ptr == NULL){
         perror("malloc");
         exit(1);
     }
 
-    memset(ptr, 0, size * sizeof(int));
+    memset(ptr, 0, size);
 
     return ptr;
 }

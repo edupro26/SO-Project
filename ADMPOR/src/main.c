@@ -66,13 +66,13 @@ void main_args(int argc, char* argv[], struct main_data* data) {
 }
 
 void create_dynamic_memory_buffers(struct main_data* data) {
-    data->client_pids = create_dynamic_memory(data->n_clients);
-    data->intermediary_pids = create_dynamic_memory(data->n_intermediaries);
-    data->enterprise_pids = create_dynamic_memory(data->n_enterprises);
+    data->client_pids = create_dynamic_memory(data->n_clients * sizeof(int));
+    data->intermediary_pids = create_dynamic_memory(data->n_intermediaries * sizeof(int));
+    data->enterprise_pids = create_dynamic_memory(data->n_enterprises * sizeof(int));
     
-    data->client_stats = create_dynamic_memory(data->n_clients);
-    data->intermediary_stats = create_dynamic_memory(data->n_intermediaries);
-    data->enterprise_stats = create_dynamic_memory(data->n_enterprises);
+    data->client_stats = create_dynamic_memory(data->n_clients * sizeof(int));
+    data->intermediary_stats = create_dynamic_memory(data->n_intermediaries * sizeof(int));
+    data->enterprise_stats = create_dynamic_memory(data->n_enterprises * sizeof(int));
 }
 
 void create_shared_memory_buffers(struct main_data* data, struct comm_buffers* buffers) {
@@ -248,11 +248,12 @@ void read_status(struct main_data* data, struct semaphores* sems) {
 
 void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct semaphores* sems) {
     *(data->terminate) = 1;
-    printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
-    
     wakeup_processes(data, sems);
     wait_processes(data);
+
+    printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
     write_statistics(data);
+    
     destroy_semaphores(sems);
     destroy_memory_buffers(data, buffers);
 }
