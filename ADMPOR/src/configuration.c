@@ -46,13 +46,49 @@ void read_file(FILE *input, struct main_data* data) {
         }
         else {
             fgets(buffer, MAX_LINE, input);
-            //save_to_main_data(buffer, line, data);
+            save_to_main_data(buffer, line, data);
         }
-    } while (keep_reading);
+        line++;
 
-    line++;
+    } while (keep_reading);
 }
 
-// void save_to_main_data(char* buffer[], int line, struct main_data* data) {
+void save_to_main_data(char buffer[], int line, struct main_data* data) {
+    int temp = atoi(buffer);
+    switch (line) {
+        case 0:
+            data->max_ops = temp;
+            break;
+        case 1:
+            data->buffers_size = temp;
+            break;
+        case 2:
+            data->n_clients = temp;
+            break;
+        case 3:
+            data->n_intermediaries = temp;
+            break;
+        case 4:
+            data->n_enterprises = temp;
+            break;
+        case 5:
+            strcpy(data->log_file_name, buffer);
+            break;
+        case 6:
+            strcpy(data->stats_file_name, buffer);
+            break;
+        case 7:
+            //TODO
+            break;
+    }
+}
 
-// }
+int check_args(int argc, char* argv[]) {
+    if(argc != 2) 
+        return 0;
+
+    if(strcmp(argv[1], "config.txt"))
+        return 0;
+
+    return 1;
+}

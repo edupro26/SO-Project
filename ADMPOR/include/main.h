@@ -4,6 +4,8 @@
 #include "synchronization.h"
 #include "memory.h"
 
+#define MAX_LINE 1024
+
 //Estrutura que agrega a informação necessária pela main do AdmPor.
 struct main_data {
 	int max_ops;			//número máximo de operações
@@ -13,8 +15,8 @@ struct main_data {
 	int n_intermediaries;	//número de intermediários
 	int n_enterprises;		//número de empresas
 
-	char* log_file_name;		//nome do ficheiro log
-	char* stats_file_name;		//nome do ficheiro stats
+	char log_file_name[MAX_LINE];		//nome do ficheiro log
+	char stats_file_name[MAX_LINE];		//nome do ficheiro stats
 	
 	int *client_pids;			//process ids de clientes
 	int *intermediary_pids;		//process ids de intermediários

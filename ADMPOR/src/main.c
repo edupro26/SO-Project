@@ -14,10 +14,10 @@ Tiago Oliveira - 54979
 #include <unistd.h>
 #include <ctype.h>
 
-#include "configuration.h"
-#include "process.h"
-#include "main-private.h"
 #include "main.h"
+#include "main-private.h"
+#include "process.h"
+#include "configuration.h"
 #include "apsignal.h"
 //#include "stats.h"
 
@@ -31,35 +31,13 @@ int isNumber(char n[]) {
     return 1;
 }
 
-int check_args(int argc, char* argv[]){
-    if (argc != 6) return 1;
-
-    for (int i = 1; i < argc; i++) {
-        if(!isNumber(argv[i]))
-            return 1;
-
-        if(atoi(argv[i]) < 1) 
-            return 1;
-    }
-
-    return 0;
-}
-
 void main_args(int argc, char* argv[], struct main_data* data) {
-    if (check_args(argc, argv) == 0) {
-        int temp[5];
-        for (int i = 1; i < argc; i++)
-            temp[i-1] = atoi(argv[i]);
-
-        data->max_ops = temp[0];
-        data->buffers_size = temp[1];
-        data->n_clients = temp[2];
-        data->n_intermediaries= temp[3];
-        data->n_enterprises = temp[4];
-    }
-    else {
-        printf("Uso: admpor max_ops buffers_size n_clients n_intermediaries n_enterprises\nExemplo: ./bin/admpor 10 10 1 1 1\n");
+    if(!check_args(argc, argv)){
+        printf("Uso: admpor config.txt\nExemplo: ./bin/admpor config.txt\n");
         exit(1);
+    }
+    else{
+        read_input_file(argv[1], data);
     }
 }
 

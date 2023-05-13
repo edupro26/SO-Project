@@ -6,9 +6,6 @@
 /* Verifica se n é um número*/
 int isNumber(char n[]);
 
-/* Função que verifica se existe argumentos inválidos*/
-int check_args(int argc, char* argv[]);
-
 /* Função que verifica um comando op foi feito incorretamente*/
 int check_request(char id1[], char id2[]);
 
