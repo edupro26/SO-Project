@@ -17,7 +17,6 @@ Para executar o programa, a seguir à compilação do mesmo, basta executar o fi
 ### Trabalho realizado por:
 
 **Grupo 10** <br />
-Diogo Peixoto - 53365 <br />
 Eduardo Proença - 57551 <br />
 Tiago Oliveira - 54979 <br />
 
