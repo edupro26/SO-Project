@@ -19,8 +19,10 @@ Tiago Oliveira - 54979
 #include "configuration.h"
 #include "apsignal.h"
 #include "log.h"
-//#include "stats.h"
+#include "stats.h"
 
+
+int op_counter = 0;
 
 int isNumber(char n[]) {
     for (int i = 0; n[i] != 0; i++) {
@@ -95,7 +97,7 @@ void print_help() {
 
 void user_interaction(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     char command[20];
-    int op_counter = 0;
+    //int op_counter = 0;
     print_help();
 
     while (1) {
@@ -233,13 +235,14 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
     printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
     write_statistics(data);
     
+    
     destroy_semaphores(sems);
     destroy_memory_buffers(data, buffers);
 }
 
 void write_statistics(struct main_data* data) {
     // int num_ops = 0; // TODO - get number of operations
-    // write_statistics_to_file(data->client_stats, num_ops, stat_file_name);
+    write_statistics_to_file(data, op_counter, "statistics.txt");
 
     for (int i = 0; i < data->n_clients; i++)
         printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
