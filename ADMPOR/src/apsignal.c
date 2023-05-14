@@ -3,6 +3,7 @@
 #include "apsignal.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 struct main_data *data_pointer;
 struct comm_buffers *buffers_pointer;
@@ -10,9 +11,8 @@ struct semaphores *sems_pointer;
 int father_pid;
 
 void sigint_handler(int sig_num) {
-    // Make sure this is the father process
-    // Get father pid
-
+ 
+    // Só o pai deve invocar stop_execution
     if (getpid() != father_pid) {
         return;
     }
@@ -20,10 +20,8 @@ void sigint_handler(int sig_num) {
     // Invocar stop_execution quando SIGINT é recebido
     if (sig_num == SIGINT) {
         int pid = getpid();
-        // Print pid
-        printf("PID: %d\n", pid);
-        printf("SIGINT received\n");
-        //stop_execution(data_pointer, buffers_pointer, sems_pointer);
+        stop_execution(data_pointer, buffers_pointer, sems_pointer);
+        exit(0);
     }
 }
 
@@ -32,11 +30,7 @@ void ctrlC(struct main_data* data, struct comm_buffers* buffers, struct semaphor
     data_pointer = data;
     buffers_pointer = buffers;
     sems_pointer = sems;
-
-    int pid = getpid();
-    // Print pid
-    printf("PID on register: %d\n", pid);
-
+    
     father_pid = getpid();
 
     // Configurar o sinal SIGINT para ser tratado pela função sigint_handler
