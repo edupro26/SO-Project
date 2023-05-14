@@ -61,4 +61,4 @@ dkms.conf
 bin/
 
 # text files
-log.txt
+ADMPOR/log.txt
