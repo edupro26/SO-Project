@@ -1,17 +1,21 @@
+#ifndef LOG_H_GUARD
+#define LOG_H_GUARD
+
 #include <time.h>
 
-struct log_item {
-    timespec time;
-    char *operation;
-    char *argument;
-};
+#include "main.h"
+#include "aptime.h"
 
-// Initialize the log file
-int log_init(char *log_file_name);
+/* Initialize the log file */
+void log_init(struct main_data* data);
 
-// Append a new item to the log file like 2022-2-31 14:53:30.572 status 0
-int log_append(struct log_item *item);
+/* Writes an operation in the log file */
+void log_operation(struct main_data* data, struct operation* op);
 
-// Close the log file
-int log_close();
+/* Writes a status command in the log file */
+void log_status(struct main_data* data, int op_id);
 
+/* Writes a string in the log file */
+void log_append(struct main_data* data, const char* command);
+
+#endif

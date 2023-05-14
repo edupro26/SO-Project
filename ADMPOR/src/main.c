@@ -20,6 +20,7 @@ Tiago Oliveira - 54979
 #include "configuration.h"
 #include "apsignal.h"
 #include "aptime.h"
+#include "log.h"
 //#include "stats.h"
 
 
@@ -111,10 +112,12 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
             read_status(data, sems);
         } 
         else if (strcmp(command, "stop") == 0) {
+            log_append(data, "stop");
             stop_execution(data, buffers, sems);
             exit(1);
         } 
         else if (strcmp(command, "help") == 0) {
+            log_append(data, "help");
             print_help();
         } 
         else {
@@ -156,6 +159,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     op.status = 'M';
 
     register_start_time(&op);
+    log_operation(data, &op);
     data->results[*op_counter] = op;
     produce_begin(sems->main_client);
     write_main_client_buffer(buffers->main_client, data->buffers_size, &op);
@@ -221,6 +225,7 @@ void read_status(struct main_data* data, struct semaphores* sems) {
 
     int op_id = atoi(id);
     semaphore_mutex_lock(sems->results_mutex);
+    log_status(data, op_id);
     print_status(op_id, data);
     semaphore_mutex_unlock(sems->results_mutex);
 }
@@ -349,6 +354,7 @@ int main(int argc, char *argv[]) {
     create_shared_memory_buffers(data, buffers);
     create_semaphores(data, sems);
     launch_processes(buffers, data, sems);
+    log_init(data);
     user_interaction(buffers, data, sems);
 
     //release memory before terminating

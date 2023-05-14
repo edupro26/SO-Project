@@ -44,14 +44,11 @@ void register_enterp_time(struct operation* op) {
     }
 }
 
-struct tm get_local_time() {
+void get_local_time(struct tm* local_time) {
     time_t t = time(0);
-    struct tm local_time;
     
-    if(localtime_r(&t, &local_time) == NULL){
+    if(localtime_r(&t, local_time) == NULL){
         perror("local_time");
         exit(1);
-    }
-    
-    return local_time;
+    } 
 }

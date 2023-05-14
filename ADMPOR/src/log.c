@@ -1,46 +1,74 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "log.h"
 
-FILE *log_file;
+void log_init(struct main_data* data) {
+    FILE *log;
 
-int log_init(char *log_file_name) {
-    
-    log_file = fopen(log_file_name, "a"); // append mode to create the file if it doesn't exist
-    if (log_file == NULL) {
+    log = fopen(data->log_file_name, "w");
+    if (log == NULL) {
         perror("Unable to open log file");
-        return -1;
+        exit(1);
     }
-    return 0;
+
+    fclose(log);
 }
 
-int log_append(struct log_item *item) {
-    if (!log_file || !item) {
-        return -1;
+void log_operation(struct main_data* data, struct operation* op) {
+    FILE *log;
+
+    log = fopen(data->log_file_name, "a");
+    if(log == NULL){
+        perror("Unable to open log file");
+        exit(1);
     }
 
-    char time_str[100];
-    strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", localtime(&(item->time.tv_sec)));
+    struct tm localtime;
+    get_local_time(&localtime);
+    char buffer[50];
+    strftime(buffer, 50, "%Y-%m-%d %H:%M:%S", &localtime);
 
-    if (fprintf(log_file, "%s.%ld %s %s\n", time_str, item->time.tv_nsec, item->operation, item->argument) < 0) {
-        perror("Error writing to log file");
-        return -1;
-    }
+    fprintf(log, "%s %s %d %d\n", buffer, "op", op->requesting_client, op->requested_enterp);
 
-    return 0;
+    fclose(log);
 }
 
-int log_close() {
-    if (!log_file) {
-        return -1;
+void log_status(struct main_data* data, int op_id) {
+    FILE *log;
+
+    log = fopen(data->log_file_name, "a");
+    if(log == NULL){
+        perror("Unable to open log file");
+        exit(1);
     }
 
-    if (fclose(log_file) != 0) {
-        perror("Error closing log file");
-        return -1;
+    struct tm localtime;
+    get_local_time(&localtime);
+    char buffer[50];
+    strftime(buffer, 50, "%Y-%m-%d %H:%M:%S", &localtime);
+
+    fprintf(log, "%s %s %d\n", buffer, "status", op_id);
+
+    fclose(log);
+}
+
+void log_append(struct main_data* data, const char* command) {
+    FILE *log;
+
+    log = fopen(data->log_file_name, "a");
+    if(log == NULL){
+        perror("Unable to open log file");
+        exit(1);
     }
 
-    log_file = NULL;
-    return 0;
+    struct tm localtime;
+    get_local_time(&localtime);
+    char buffer[50];
+    strftime(buffer, 50, "%Y-%m-%d %H:%M:%S", &localtime);
+
+    fprintf(log, "%s %s\n", buffer, command);
+
+    fclose(log);
 }
