@@ -14,6 +14,7 @@ Tiago Oliveira - 54979
 #include <unistd.h>
 
 #include "synchronization.h"
+#include "aptime.h"
 #include "intermediary.h"
 
 int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
@@ -28,6 +29,7 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
         intermediary_receive_operation(p_op, buffers, data, sems);
 
         if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
+            register_intermd_time(&op);
             printf("Intermediário recebeu pedido!\n");
             intermediary_process_operation(p_op, interm_id, data, &counter, sems);
             intermediary_send_answer(p_op, buffers, data, sems);

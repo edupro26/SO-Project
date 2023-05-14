@@ -14,6 +14,7 @@ Tiago Oliveira - 54979
 #include <unistd.h>
 
 #include "synchronization.h"
+#include "aptime.h"
 #include "client.h"
 
 int execute_client(int client_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {  
@@ -29,6 +30,7 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
         client_get_operation(p_op, client_id, buffers, data, sems);
 
         if(p_op->id >= 0){ // Only process the operation if it is valid (!= -1)
+            register_client_time(&op);
             printf("Cliente recebeu pedido!\n");
             client_process_operation(p_op, client_id, data, &counter, sems);
             client_send_operation(p_op, buffers, data, sems);

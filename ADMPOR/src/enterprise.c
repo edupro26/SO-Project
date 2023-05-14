@@ -14,6 +14,7 @@ Tiago Oliveira - 54979
 #include <unistd.h>
 
 #include "synchronization.h"
+#include "aptime.h"
 #include "enterprise.h"
 
 int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
@@ -29,6 +30,7 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
         enterprise_receive_operation(p_op, enterp_id, buffers, data, sems);
 
         if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
+            register_enterp_time(&op);
             printf("Empresa recebeu pedido!\n");
             enterprise_process_operation(p_op, enterp_id, data, &counter, sems);
         }
