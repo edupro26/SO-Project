@@ -11,7 +11,7 @@ configuration.o = configuration.h
 apsignal.o = apsignal.h
 aptime.o = aptime.h
 log.o = log.h
-CFLAGS = -lrt -Wall -Wextra
+CFLAGS = -g -lrt -Wall -Wextra
 CC = gcc
 
 admpor: $(OBJECTS)
