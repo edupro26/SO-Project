@@ -19,7 +19,6 @@ Tiago Oliveira - 54979
 #include "process.h"
 #include "configuration.h"
 #include "apsignal.h"
-#include "aptime.h"
 #include "log.h"
 //#include "stats.h"
 
@@ -148,7 +147,6 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         printf("id de cliente ou empresa inválido!\n");
         return;
     }
-
     int client_id = atoi(id1);
     int enterp_id = atoi(id2);
 
@@ -158,12 +156,10 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     op.requested_enterp = enterp_id;
     op.status = 'M';
 
-    register_start_time(&op);
     log_operation(data, &op);
     data->results[*op_counter] = op;
     produce_begin(sems->main_client);
     write_main_client_buffer(buffers->main_client, data->buffers_size, &op);
-
     printf("O pedido #%d foi criado \n", *op_counter);
     (*op_counter)++;
 }

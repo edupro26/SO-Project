@@ -1,8 +1,6 @@
 #ifndef LOG_H_GUARD
 #define LOG_H_GUARD
 
-#include <time.h>
-
 #include "main.h"
 #include "aptime.h"
 
