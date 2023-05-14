@@ -1,3 +1,12 @@
+/* 
+
+Sistemas Operativos - Projeto Fase 1 
+Grupo 10
+Eduardo Proença  - 57551
+Tiago Oliveira - 54979
+
+*/
+
 #include <signal.h>
 #include "main.h"
 #include "apsignal.h"
@@ -30,7 +39,7 @@ void ctrlC(struct main_data* data, struct comm_buffers* buffers, struct semaphor
     data_pointer = data;
     buffers_pointer = buffers;
     sems_pointer = sems;
-    
+
     father_pid = getpid();
 
     // Configurar o sinal SIGINT para ser tratado pela função sigint_handler

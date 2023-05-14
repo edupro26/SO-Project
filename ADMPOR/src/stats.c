@@ -1,3 +1,12 @@
+/* 
+
+Sistemas Operativos - Projeto Fase 1 
+Grupo 10
+Eduardo Proença  - 57551
+Tiago Oliveira - 54979
+
+*/
+
 // #include <stdio.h>
 // #include <stdlib.h>
 // #include <time.h>
