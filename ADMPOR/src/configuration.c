@@ -77,7 +77,7 @@ void save_to_main_data(char buffer[], int line, struct main_data* data) {
             strcpy(data->stats_file_name, buffer);
             break;
         case 7:
-            //TODO
+            data->alarm_time = temp;
             break;
     }
 }

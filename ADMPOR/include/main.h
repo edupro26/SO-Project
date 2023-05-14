@@ -17,6 +17,7 @@ struct main_data {
 
 	char log_file_name[MAX_LINE];		//nome do ficheiro log
 	char stats_file_name[MAX_LINE];		//nome do ficheiro stats
+	int alarm_time;					 	//intervalo de tempo de alarme
 	
 	int *client_pids;			//process ids de clientes
 	int *intermediary_pids;		//process ids de intermediários
