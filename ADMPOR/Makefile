@@ -1,6 +1,6 @@
 OBJ_dir = obj
-OBJECTS = main.o memory.o process.o client.o intermediary.o enterprise.o synchronization.o configuration.o apsignal.o
-main.o = main.h main-private.h process.h configuration.h
+OBJECTS = main.o memory.o process.o client.o intermediary.o enterprise.o synchronization.o configuration.o apsignal.o aptime.o
+main.o = main.h main-private.h process.h configuration.h aptime.h
 memory.o = memory.h
 process.o = process.h client.h intermediary.h enterprise.h synchronization.h
 client.o = client.h synchronization.h
@@ -9,7 +9,8 @@ enterprise.o = enterprise.h synchronization.h
 synchronization.o = synchronization.h
 configuration.o = configuration.h
 apsignal.o = apsignal.h
-CFLAGS = -Wall -Wextra
+aptime.o = aptime.h
+CFLAGS = -lrt -Wall -Wextra
 CC = gcc
 
 admpor: $(OBJECTS)
