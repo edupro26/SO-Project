@@ -24,15 +24,13 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
             return counter;
 
         struct operation op;
-        struct operation* p_op = &op;
-
         produce_end(sems->interm_enterp);
-        enterprise_receive_operation(p_op, enterp_id, buffers, data, sems);
+        enterprise_receive_operation(&op, enterp_id, buffers, data, sems);
 
-        if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
+        if (op.id >= 0) { // Only process the operation if it is valid (!= -1)
             register_enterp_time(&op);
             printf("Empresa recebeu pedido!\n");
-            enterprise_process_operation(p_op, enterp_id, data, &counter, sems);
+            enterprise_process_operation(&op, enterp_id, data, &counter, sems);
         }
     }
 }

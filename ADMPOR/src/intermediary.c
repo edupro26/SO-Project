@@ -24,15 +24,13 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
             return counter;
 
         struct operation op;
-        struct operation* p_op = &op;
-        
-        intermediary_receive_operation(p_op, buffers, data, sems);
+        intermediary_receive_operation(&op, buffers, data, sems);
 
-        if (p_op->id >= 0) { // Only process the operation if it is valid (!= -1)
+        if (op.id >= 0) { // Only process the operation if it is valid (!= -1)
             register_intermd_time(&op);
             printf("Intermediário recebeu pedido!\n");
-            intermediary_process_operation(p_op, interm_id, data, &counter, sems);
-            intermediary_send_answer(p_op, buffers, data, sems);
+            intermediary_process_operation(&op, interm_id, data, &counter, sems);
+            intermediary_send_answer(&op, buffers, data, sems);
         }
     }
 }

@@ -95,7 +95,7 @@ void print_help() {
 }
 
 void user_interaction(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
-    char command[10];
+    char command[20];
     int op_counter = 0;
     print_help();
 
@@ -118,6 +118,8 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
             print_help();
         } 
         else {
+            char s1[10], s2[10];
+            scanf("%s %s", s1, s2);
             printf("Ação não reconhecida, insira 'help' para assistência..\n");
         }
     }
@@ -137,8 +139,7 @@ int check_request(char id1[], char id2[]) {
 
 void create_request(int* op_counter, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     char id1[10], id2[10];
-    scanf("%s", id1);
-    scanf("%s", id2);
+    scanf("%s %s", id1, id2);
     
     if(check_request(id1, id2) == 1){
         printf("id de cliente ou empresa inválido!\n");

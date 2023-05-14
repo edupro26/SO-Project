@@ -24,16 +24,14 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
             return counter;
 
         struct operation op;
-        struct operation *p_op = &op;
-
         produce_end(sems->main_client);
-        client_get_operation(p_op, client_id, buffers, data, sems);
+        client_get_operation(&op, client_id, buffers, data, sems);
 
-        if(p_op->id >= 0){ // Only process the operation if it is valid (!= -1)
+        if(op.id >= 0){ // Only process the operation if it is valid (!= -1)
             register_client_time(&op);
             printf("Cliente recebeu pedido!\n");
-            client_process_operation(p_op, client_id, data, &counter, sems);
-            client_send_operation(p_op, buffers, data, sems);
+            client_process_operation(&op, client_id, data, &counter, sems);
+            client_send_operation(&op, buffers, data, sems);
         }
     }
 }
