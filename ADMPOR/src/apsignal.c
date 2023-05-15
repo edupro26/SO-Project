@@ -8,19 +8,41 @@ Tiago Oliveira - 54979
 */
 
 #include <signal.h>
-#include "main.h"
-#include "apsignal.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 
+#include "apsignal.h"
+
 struct main_data *data_pointer;
 struct comm_buffers *buffers_pointer;
 struct semaphores *sems_pointer;
+int *op_counter_pointer;
 int father_pid;
 
+
+void sigalrm_handler(int sig_num) {
+    if(sig_num == SIGALRM) {
+        printf("Operations resume:\n");
+        for(int i = 0; i < *op_counter_pointer; i++){
+            struct operation op = data_pointer->results[i];
+            printf("op:%d status:%c start_time:%ld ", op.id, op.status, op.start_time.tv_sec);
+            printf("client:%d client_time:%ld ", op.receiving_client, op.client_time.tv_sec);
+            printf("intermediary:%d intermediary_time:%ld ", op.receiving_interm, op.intermed_time.tv_sec);
+            printf("enterprise:%d enterprise_time:%ld\n", op.receiving_enterp, op.enterp_time.tv_sec);
+        }
+        printf("Introduzir ação:\n");
+        alarm(data_pointer->alarm_time);
+    }
+}
+
+void print_alarm(int* op_counter) {
+    op_counter_pointer = op_counter;
+    signal(SIGALRM, sigalrm_handler);
+    alarm(data_pointer->alarm_time);
+}
+
 void sigint_handler(int sig_num) {
- 
     // Só o pai deve invocar stop_execution
     if (getpid() != father_pid) {
         return;

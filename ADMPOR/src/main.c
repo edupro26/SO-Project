@@ -101,6 +101,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
     print_help();
 
     while (1) {
+        print_alarm(&op_counter);
         printf("Introduzir ação:\n");
         scanf("%s", command);
 
