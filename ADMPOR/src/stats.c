@@ -58,16 +58,25 @@ void write_ops_statistics(struct operation* ops, int num_ops) {
         char client_time_str[100];
         strftime(client_time_str, sizeof(client_time_str), "%Y-%m-%d %H:%M:%S", localtime(&(op->client_time.tv_sec)));
 
+        char intermediary_time_str[100];
+        strftime(intermediary_time_str, sizeof(intermediary_time_str), "%Y-%m-%d %H:%M:%S", localtime(&(op->intermed_time.tv_sec)));
+
+        char enterprise_time_str[100];
+        strftime(enterprise_time_str, sizeof(enterprise_time_str), "%Y-%m-%d %H:%M:%S", localtime(&(op->enterp_time.tv_sec)));
+
         double total_time = calculate_total_time(op->start_time, op->enterp_time);
 
         fprintf(stats_file, "Request: %d\n", op->id);
         fprintf(stats_file, "Status: %c\n", op->status);
-        fprintf(stats_file, "Client id: %d\n", op->requesting_client);
         fprintf(stats_file, "Intermediary id: %d\n", op->receiving_interm);
         fprintf(stats_file, "Enterprise id: %d\n", op->requested_enterp);
-        fprintf(stats_file, "Start time: %s.%03ld\n", start_time_str, op->start_time.tv_nsec);
-        fprintf(stats_file, "Client time: %s.%03ld\n\n", client_time_str, op->client_time.tv_nsec);
-        fprintf(stats_file, "Total time: %.3f seconds\n", total_time);
+        fprintf(stats_file, "Client id: %d\n", op->requesting_client);
+        fprintf(stats_file, "Start time: %s.%03ld\n", start_time_str, op->start_time.tv_nsec / 1000000);
+        fprintf(stats_file, "Client time: %s.%03ld\n", client_time_str, op->client_time.tv_nsec / 1000000);
+        fprintf(stats_file, "Intermediary time: %s.%03ld\n", intermediary_time_str, op->intermed_time.tv_nsec / 1000000);
+        fprintf(stats_file, "Enterprise time: %s.%03ld\n", enterprise_time_str, op->enterp_time.tv_nsec / 1000000);
+        fprintf(stats_file, "Total time: %.3f\n\n", total_time);
+
     }
 }
 
