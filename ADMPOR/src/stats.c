@@ -40,14 +40,18 @@ void write_statistics_to_file(struct main_data* data){
 void write_process_statistics(FILE *stats_file, struct main_data* data) {
     fprintf(stats_file, "Process Statistics:\n");
 
-    for (int i = 0; i < data->n_clients; i++)
-        fprintf(stats_file, "Client %d received %d operation(s)!\n", i, data->client_stats[i]);
-
-    for (int i = 0; i < data->n_intermediaries; i++)
-        fprintf(stats_file, "Intermidiary %d prepared %d operation(s)!\n", i, data->intermediary_stats[i]);
-
-    for (int i = 0; i < data->n_enterprises; i++) 
-        fprintf(stats_file, "Enterprise %d executed %d operation(s)!\n", i, data->enterprise_stats[i]);
+    for (int i = 0; i < data->n_clients; i++) {
+        if(data->client_stats[i] > 0)
+            fprintf(stats_file, "Client %d received %d operation(s)!\n", i, data->client_stats[i]);
+    }
+    for (int i = 0; i < data->n_intermediaries; i++) {
+        if(data->intermediary_stats[i] > 0)
+            fprintf(stats_file, "Intermidiary %d prepared %d operation(s)!\n", i, data->intermediary_stats[i]);
+    }
+    for (int i = 0; i < data->n_enterprises; i++) {
+        if(data->enterprise_stats[i] > 0)
+            fprintf(stats_file, "Enterprise %d executed %d operation(s)!\n", i, data->enterprise_stats[i]);
+    }
 }
 
 void write_ops_statistics(FILE *stats_file, struct operation* ops) {
@@ -79,7 +83,7 @@ void write_ops_statistics(FILE *stats_file, struct operation* ops) {
         fprintf(stats_file, "Client time: %s.%03ld\n", client_time_str, op->client_time.tv_nsec / 1000000);
         fprintf(stats_file, "Intermediary time: %s.%03ld\n", intermediary_time_str, op->intermed_time.tv_nsec / 1000000);
         fprintf(stats_file, "Enterprise time: %s.%03ld\n", enterprise_time_str, op->enterp_time.tv_nsec / 1000000);
-        fprintf(stats_file, "Total time: %.3lf\n\n", total_time);
+        fprintf(stats_file, "Total time: %.3lf\n", total_time);
     }
 }
 
