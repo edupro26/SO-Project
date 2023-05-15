@@ -28,7 +28,6 @@ void sigint_handler(int sig_num) {
 
     // Invocar stop_execution quando SIGINT é recebido
     if (sig_num == SIGINT) {
-        int pid = getpid();
         stop_execution(data_pointer, buffers_pointer, sems_pointer);
         exit(0);
     }
