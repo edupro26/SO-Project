@@ -71,9 +71,11 @@ void save_to_main_data(char buffer[], int line, struct main_data* data) {
             data->n_enterprises = temp;
             break;
         case 5:
+            buffer[strcspn(buffer, "\n")] = 0;
             strcpy(data->log_file_name, buffer);
             break;
         case 6:
+            buffer[strcspn(buffer, "\n")] = 0;
             strcpy(data->stats_file_name, buffer);
             break;
         case 7:
