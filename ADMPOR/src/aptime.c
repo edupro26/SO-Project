@@ -11,7 +11,6 @@ Tiago Oliveira - 54979
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <time.h>
 
 #include "aptime.h"
 
@@ -41,13 +40,4 @@ void register_enterp_time(struct operation* op) {
         perror("clock gettime");
         exit(1);
     }
-}
-
-void get_local_time(struct tm* local_time) {
-    time_t t = time(0);
-    
-    if(localtime_r(&t, local_time) == NULL){
-        perror("local_time");
-        exit(1);
-    } 
 }

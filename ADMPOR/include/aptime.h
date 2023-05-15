@@ -13,6 +13,4 @@ void register_intermd_time(struct operation* op);
 
 void register_enterp_time(struct operation* op);
 
-void get_local_time(struct tm* local_time);
-
 #endif
