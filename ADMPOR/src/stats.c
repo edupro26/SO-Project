@@ -14,8 +14,8 @@ Tiago Oliveira - 54979
 #include "main.h";
 
 
-void write_statistics_to_file(struct main_data* data, int num_ops, char* filename){
-    stats_file = fopen(filename, "w");
+void write_statistics_to_file(struct main_data* data, int num_ops){
+    stats_file = fopen(data->stats_file_name, "w");
 
     if(stats_file == NULL){
         perror("Unable to open stats file");

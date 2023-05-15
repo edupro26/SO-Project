@@ -242,7 +242,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
 
 void write_statistics(struct main_data* data) {
     // int num_ops = 0; // TODO - get number of operations
-    write_statistics_to_file(data, op_counter, "statistics.txt");
+    write_statistics_to_file(data, op_counter);
 
     for (int i = 0; i < data->n_clients; i++)
         printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);
