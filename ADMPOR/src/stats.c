@@ -13,8 +13,13 @@ Tiago Oliveira - 54979
 
 #include "stats.h"
 
+int *op_counter_stats_pointer;
 
-void write_statistics_to_file(struct main_data* data, int num_ops){
+void save_op_counter_value(int *op_counter) {
+    op_counter_stats_pointer = op_counter;
+}
+
+void write_statistics_to_file(struct main_data* data){
     FILE *stats_file;
     stats_file = fopen(data->stats_file_name, "w");
 
@@ -24,12 +29,10 @@ void write_statistics_to_file(struct main_data* data, int num_ops){
     }
 
     write_process_statistics(stats_file, data);
-    write_ops_statistics(stats_file, data->results, num_ops);
+    write_ops_statistics(stats_file, data->results);
 
     fclose(stats_file);
-
     stats_file = NULL;
-
 }
 
 void write_process_statistics(FILE *stats_file, struct main_data* data) {
@@ -45,12 +48,10 @@ void write_process_statistics(FILE *stats_file, struct main_data* data) {
         fprintf(stats_file, "Enterprise %d executed %d operation(s)!\n", i, data->enterprise_stats[i]);
 }
 
-void write_ops_statistics(FILE *stats_file, struct operation* ops, int num_ops) {
-    fprintf(stats_file, "\nOperation Statistics:\n");
+void write_ops_statistics(FILE *stats_file, struct operation* ops) {
+    fprintf(stats_file, "\nRequest Statistics:\n");
 
-    fprintf(stats_file, "Request Statistics:\n");
-
-    for (int i = 0; i < num_ops; i++) {
+    for (int i = 0; i < *op_counter_stats_pointer; i++) {
         struct operation* op = &ops[i];
 
         char start_time_str[100];
@@ -77,7 +78,6 @@ void write_ops_statistics(FILE *stats_file, struct operation* ops, int num_ops) 
         fprintf(stats_file, "Intermediary time: %s.%03ld\n", intermediary_time_str, op->intermed_time.tv_nsec / 1000000);
         fprintf(stats_file, "Enterprise time: %s.%03ld\n", enterprise_time_str, op->enterp_time.tv_nsec / 1000000);
         fprintf(stats_file, "Total time: %.3f\n\n", total_time);
-
     }
 }
 

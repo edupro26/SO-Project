@@ -22,8 +22,6 @@ Tiago Oliveira - 54979
 #include "stats.h"
 
 
-int op_counter = 0;
-
 int isNumber(char n[]) {
     for (int i = 0; n[i] != 0; i++) {
         if (!isdigit(n[i]))
@@ -97,7 +95,7 @@ void print_help() {
 
 void user_interaction(struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     char command[20];
-    //int op_counter = 0;
+    int op_counter = 0;
     set_alarm(&op_counter);
     print_help();
 
@@ -114,6 +112,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
         } 
         else if (strcmp(command, "stop") == 0) {
             log_append(data, "stop");
+            save_op_counter_value(&op_counter);
             stop_execution(data, buffers, sems);
             exit(1);
         } 
@@ -243,7 +242,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
 
 void write_statistics(struct main_data* data) {
     // int num_ops = 0; // TODO - get number of operations
-    write_statistics_to_file(data, op_counter);
+    write_statistics_to_file(data);
 
     for (int i = 0; i < data->n_clients; i++)
         printf("Cliente %d processou %d pedidos!\n", i, data->client_stats[i]);

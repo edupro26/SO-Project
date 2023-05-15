@@ -17,7 +17,7 @@ Tiago Oliveira - 54979
 struct main_data *data_pointer;
 struct comm_buffers *buffers_pointer;
 struct semaphores *sems_pointer;
-int *op_counter_pointer;
+int *op_counter_sinal_pointer;
 int father_pid;
 
 
@@ -55,14 +55,14 @@ void sigalrm_handler(int sig_num) {
 }
 
 void set_alarm(int* op_counter) {
-    op_counter_pointer = op_counter;
+    op_counter_sinal_pointer = op_counter;
     signal(SIGALRM, sigalrm_handler);
     alarm(data_pointer->alarm_time);
 }
 
 void print_alarm() {
     printf("\nOperations resume:\n");
-    for(int i = 0; i < *op_counter_pointer; i++){
+    for(int i = 0; i < *op_counter_sinal_pointer; i++){
         struct operation op = data_pointer->results[i];
         switch (op.status) {
             case 'M':
