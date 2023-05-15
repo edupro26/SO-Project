@@ -20,4 +20,4 @@ admpor: $(OBJECTS)
 %.o: src/%.c $($@)
 	$(CC) $(CFLAGS) -I include -o $(OBJ_dir)/$@ -c $<
 clean:
-	rm -rf $(OBJ_dir)/*.o bin/*
+	rm -rf $(OBJ_dir)/*.o bin/* log.txt stats.txt
