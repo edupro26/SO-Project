@@ -148,6 +148,10 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
         printf("id de cliente ou empresa inválido!\n");
         return;
     }
+    if(*op_counter >= MAX_RESULTS){
+        printf("O numero maximo de operações foi atingido!\n");
+        return;
+    }
     int client_id = atoi(id1);
     int enterp_id = atoi(id2);
 

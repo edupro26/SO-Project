@@ -29,7 +29,9 @@ void write_statistics_to_file(struct main_data* data){
     }
 
     write_process_statistics(stats_file, data);
-    write_ops_statistics(stats_file, data->results);
+
+    if(*op_counter_stats_pointer > 0)
+        write_ops_statistics(stats_file, data->results);
 
     fclose(stats_file);
     stats_file = NULL;
@@ -77,7 +79,7 @@ void write_ops_statistics(FILE *stats_file, struct operation* ops) {
         fprintf(stats_file, "Client time: %s.%03ld\n", client_time_str, op->client_time.tv_nsec / 1000000);
         fprintf(stats_file, "Intermediary time: %s.%03ld\n", intermediary_time_str, op->intermed_time.tv_nsec / 1000000);
         fprintf(stats_file, "Enterprise time: %s.%03ld\n", enterprise_time_str, op->enterp_time.tv_nsec / 1000000);
-        fprintf(stats_file, "Total time: %.3f\n\n", total_time);
+        fprintf(stats_file, "Total time: %.3lf\n\n", total_time);
     }
 }
 
