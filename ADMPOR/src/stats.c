@@ -10,11 +10,12 @@ Tiago Oliveira - 54979
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "stats.h";
-#include "main.h";
+
+#include "stats.h"
 
 
 void write_statistics_to_file(struct main_data* data, int num_ops){
+    FILE *stats_file;
     stats_file = fopen(data->stats_file_name, "w");
 
     if(stats_file == NULL){
@@ -22,8 +23,8 @@ void write_statistics_to_file(struct main_data* data, int num_ops){
         exit(1);
     }
 
-    write_process_statistics(data);
-    write_ops_statistics(data->results, num_ops);
+    write_process_statistics(stats_file, data);
+    write_ops_statistics(stats_file, data->results, num_ops);
 
     fclose(stats_file);
 
@@ -31,7 +32,7 @@ void write_statistics_to_file(struct main_data* data, int num_ops){
 
 }
 
-void write_process_statistics(struct main_data* data) {
+void write_process_statistics(FILE *stats_file, struct main_data* data) {
     fprintf(stats_file, "Process Statistics:\n");
 
     for (int i = 0; i < data->n_clients; i++)
@@ -44,7 +45,7 @@ void write_process_statistics(struct main_data* data) {
         fprintf(stats_file, "Enterprise %d executed %d operation(s)!\n", i, data->enterprise_stats[i]);
 }
 
-void write_ops_statistics(struct operation* ops, int num_ops) {
+void write_ops_statistics(FILE *stats_file, struct operation* ops, int num_ops) {
     fprintf(stats_file, "\nOperation Statistics:\n");
 
     fprintf(stats_file, "Request Statistics:\n");
