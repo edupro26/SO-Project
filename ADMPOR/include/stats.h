@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-void save_op_counter_value(int *op_counter);
+void load_opcounter_stats(int *op_counter);
 
 void write_statistics_to_file(struct main_data* data);
 

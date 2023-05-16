@@ -15,7 +15,7 @@ Tiago Oliveira - 54979
 
 int *op_counter_stats_pointer;
 
-void save_op_counter_value(int *op_counter) {
+void load_opcounter_stats(int *op_counter) {
     op_counter_stats_pointer = op_counter;
 }
 

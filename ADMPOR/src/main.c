@@ -97,6 +97,8 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
     char command[20];
     int op_counter = 0;
     set_alarm(&op_counter);
+    load_opcounter_stats(&op_counter);
+    log_init(data);
     print_help();
 
     while (1) {
@@ -112,7 +114,6 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
         } 
         else if (strcmp(command, "stop") == 0) {
             log_append(data, "stop");
-            save_op_counter_value(&op_counter);
             stop_execution(data, buffers, sems);
             exit(1);
         } 
@@ -356,7 +357,6 @@ int main(int argc, char *argv[]) {
     create_shared_memory_buffers(data, buffers);
     create_semaphores(data, sems);
     launch_processes(buffers, data, sems);
-    log_init(data);
     user_interaction(buffers, data, sems);
 
     //release memory before terminating
