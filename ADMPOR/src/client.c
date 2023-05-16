@@ -27,7 +27,6 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
 
         if(op.id >= 0){ // Only process the operation if it is valid (!= -1)
             consume_begin(sems->main_client);
-            register_client_time(&op);
             printf("Cliente recebeu pedido!\n");
             client_process_operation(&op, client_id, data, &counter, sems);
             consume_end(sems->main_client);
@@ -50,7 +49,7 @@ void client_process_operation(struct operation* op, int client_id, struct main_d
     op->receiving_client = client_id;
     op->status = 'C'; // Set the status to "processed by client"
     (*counter)++; // Increment the operations counter
-    
+    register_client_time(op);
     // Update the operation in the results array
     int idx = op->id % MAX_RESULTS;
     data->results[idx] = *op;

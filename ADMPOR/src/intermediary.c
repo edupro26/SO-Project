@@ -27,7 +27,6 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
 
         if (op.id >= 0) { // Only process the operation if it is valid (!= -1)
             consume_begin(sems->client_interm);
-            register_intermd_time(&op);
             printf("Intermediário recebeu pedido!\n");
             intermediary_process_operation(&op, interm_id, data, &counter, sems);
             consume_end(sems->client_interm);
@@ -50,7 +49,7 @@ void intermediary_process_operation(struct operation* op, int interm_id, struct 
     op->receiving_interm = interm_id;
     op->status = 'I'; // Set the status to "processed by intermediary"
     (*counter)++; // Increment the operations counter
-
+    register_intermd_time(op);
     // Update the operation in the results array
     int idx = op->id % MAX_RESULTS;
     data->results[idx] = *op;

@@ -27,7 +27,6 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
 
         if (op.id >= 0) { // Only process the operation if it is valid (!= -1)
             consume_begin(sems->interm_enterp);
-            register_enterp_time(&op);
             printf("Empresa recebeu pedido!\n");
             enterprise_process_operation(&op, enterp_id, data, &counter, sems);
             consume_end(sems->interm_enterp);
@@ -53,7 +52,7 @@ void enterprise_process_operation(struct operation* op, int enterp_id, struct ma
         op->status = 'A'; // Set status to "scheduled by enterprise" if the max number of operations has been reached
     }
     (*counter)++;
-
+    register_enterp_time(op);
     int idx = op->id % MAX_RESULTS;
     data->results[idx] = *op;
     semaphore_mutex_unlock(sems->results_mutex);
