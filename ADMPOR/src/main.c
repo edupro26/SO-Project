@@ -166,6 +166,7 @@ void create_request(int* op_counter, struct comm_buffers* buffers, struct main_d
     data->results[*op_counter] = op;
     produce_begin(sems->main_client);
     write_main_client_buffer(buffers->main_client, data->buffers_size, &op);
+    produce_end(sems->main_client);
     printf("O pedido #%d foi criado \n", *op_counter);
     (*op_counter)++;
 }

@@ -23,22 +23,23 @@ int execute_enterprise(int enterp_id, struct comm_buffers* buffers, struct main_
             return counter;
 
         struct operation op;
-        produce_end(sems->interm_enterp);
         enterprise_receive_operation(&op, enterp_id, buffers, data, sems);
 
         if (op.id >= 0) { // Only process the operation if it is valid (!= -1)
+            consume_begin(sems->interm_enterp);
             register_enterp_time(&op);
             printf("Empresa recebeu pedido!\n");
             enterprise_process_operation(&op, enterp_id, data, &counter, sems);
+            consume_end(sems->interm_enterp);
         }
     }
 }
 
 void enterprise_receive_operation(struct operation* op, int enterp_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     if (!(*data->terminate)) {
-        consume_begin(sems->interm_enterp);
+        semaphore_mutex_lock(sems->interm_enterp->mutex);
         read_interm_enterp_buffer(buffers->interm_enterp, enterp_id, data->buffers_size, op);
-        consume_end(sems->interm_enterp);
+        semaphore_mutex_unlock(sems->interm_enterp->mutex);
     }
     return;
 }

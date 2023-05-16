@@ -23,23 +23,24 @@ int execute_client(int client_id, struct comm_buffers* buffers, struct main_data
             return counter;
 
         struct operation op;
-        produce_end(sems->main_client);
         client_get_operation(&op, client_id, buffers, data, sems);
 
         if(op.id >= 0){ // Only process the operation if it is valid (!= -1)
+            consume_begin(sems->main_client);
             register_client_time(&op);
             printf("Cliente recebeu pedido!\n");
             client_process_operation(&op, client_id, data, &counter, sems);
-            client_send_operation(&op, buffers, data, sems);
+            consume_end(sems->main_client);
+            client_send_operation(&op, buffers, data, sems);            
         }
     }
 }
 
 void client_get_operation(struct operation* op, int client_id, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     if(!(*data->terminate)){
-        consume_begin(sems->main_client);
+        semaphore_mutex_lock(sems->main_client->mutex);
         read_main_client_buffer(buffers->main_client, client_id, data->buffers_size, op);
-        consume_end(sems->main_client);
+        semaphore_mutex_unlock(sems->main_client->mutex);
     }
     return;
 }

@@ -26,9 +26,11 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
         intermediary_receive_operation(&op, buffers, data, sems);
 
         if (op.id >= 0) { // Only process the operation if it is valid (!= -1)
+            consume_begin(sems->client_interm);
             register_intermd_time(&op);
             printf("Intermediário recebeu pedido!\n");
             intermediary_process_operation(&op, interm_id, data, &counter, sems);
+            consume_end(sems->client_interm);
             intermediary_send_answer(&op, buffers, data, sems);
         }
     }
@@ -36,9 +38,9 @@ int execute_intermediary(int interm_id, struct comm_buffers* buffers, struct mai
 
 void intermediary_receive_operation(struct operation* op, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     if(!(*data->terminate)){
-        consume_begin(sems->client_interm);
+        semaphore_mutex_lock(sems->client_interm->mutex);
         read_client_interm_buffer(buffers->client_interm, data->buffers_size, op);
-        consume_end(sems->client_interm);
+        semaphore_mutex_unlock(sems->client_interm->mutex);
     }
     return;
 }
@@ -58,4 +60,5 @@ void intermediary_process_operation(struct operation* op, int interm_id, struct 
 void intermediary_send_answer(struct operation* op, struct comm_buffers* buffers, struct main_data* data, struct semaphores* sems) {
     produce_begin(sems->interm_enterp);
     write_interm_enterp_buffer(buffers->interm_enterp, data->buffers_size, op);
+    produce_end(sems->interm_enterp);
 }
