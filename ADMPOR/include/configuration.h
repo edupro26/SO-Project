@@ -17,7 +17,7 @@ void read_file(FILE *input, struct main_data* data);
 /* Guarda o conteúdo de uma linha do ficheiro de configuração no 
 * espaço correto da estruta main_data (função auxiliar de read_file)
 */
-void save_to_main_data(char buffer[], int line, struct main_data* data);
+void save_to_main_data(char* buffer, int line, struct main_data* data);
 
 /* Verifica se o ficheiro de configuração foi passado corretamente na consola
 */

@@ -5,15 +5,15 @@
 
 /* Verifica se n é um número
 */
-int isNumber(char n[]);
+int isNumber(char* n);
 
 /* Função que verifica se um comando op foi feito incorretamente
 */
-int check_request(char id1[], char id2[]);
+int check_request(char* id1, char* id2);
 
 /* Função que verifica se um comando status foi feito incorretamente
 */
-int check_status(char id[]);
+int check_status(char* id);
 
 /* Função que imprime na consola ajuda para o utilizador.
 */

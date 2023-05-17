@@ -22,7 +22,7 @@ Tiago Oliveira - 54979
 #include "stats.h"
 
 
-int isNumber(char n[]) {
+int isNumber(char* n) {
     for (int i = 0; n[i] != 0; i++) {
         if (!isdigit(n[i]))
             return 0;
@@ -101,7 +101,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
     log_init(data);
     print_help();
 
-    printf("\nAlarm time set to %d seconds\n", data->alarm_time);
+    printf("\nAlarme definido para %d segundos\n", data->alarm_time);
     while (1) {
         printf("\nIntroduzir ação:\n");
         scanf("%s", command);
@@ -130,7 +130,7 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
     }
 }
 
-int check_request(char id1[], char id2[]) {
+int check_request(char* id1, char* id2) {
     if(!isNumber(id1) || !isNumber(id2))
         return 1;
     
@@ -207,7 +207,7 @@ void print_status(int id, struct main_data* data) {
     }
 }
 
-int check_status(char id[]) {
+int check_status(char* id) {
     if(!isNumber(id))
         return 1;
     

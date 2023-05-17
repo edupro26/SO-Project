@@ -52,7 +52,7 @@ void read_file(FILE *input, struct main_data* data) {
     } while (keep_reading);
 }
 
-void save_to_main_data(char buffer[], int line, struct main_data* data) {
+void save_to_main_data(char* buffer, int line, struct main_data* data) {
     int temp = atoi(buffer);
     switch (line) {
         case 0:

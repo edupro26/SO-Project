@@ -61,7 +61,7 @@ void set_alarm(int* op_counter) {
 }
 
 void print_alarm() {
-    printf("\nOPERATIONS:\n");
+    printf("\nOPERAÇÕES:\n");
     for(int i = 0; i < *op_counter_sinal_pointer; i++){
         struct operation op = data_pointer->results[i];
         switch (op.status) {
@@ -85,6 +85,6 @@ void print_alarm() {
                 break;
         }
     }
-    printf("Next alarm in %d seconds\n", data_pointer->alarm_time);
+    printf("Próximo alarme em %d segundos\n", data_pointer->alarm_time);
     printf("\nIntroduzir ação:\n");
 }
