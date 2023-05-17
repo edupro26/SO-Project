@@ -23,4 +23,29 @@ void save_to_main_data(char* buffer, int line, struct main_data* data);
 */
 int check_args(int argc, char* argv[]);
 
+
+/* -------------- FUNÇÕES AUXILIARES -------------- */
+
+
+/* Verifica se n é um número
+*/
+int isNumber(char* n);
+
+/* Função que verifica se um comando op foi feito incorretamente
+*/
+int check_request(char* id1, char* id2);
+
+/* Função que verifica se um comando status foi feito incorretamente
+*/
+int check_status(char* id);
+
+/* Função que imprime na consola ajuda para o utilizador.
+*/
+void print_help();
+
+/* Função que imprime na consola o estado de um pedido
+*/
+void print_status(int id, struct main_data* data);
+
+
 #endif

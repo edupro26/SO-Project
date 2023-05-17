@@ -1,6 +1,6 @@
 OBJ_dir = obj
 OBJECTS = main.o memory.o process.o client.o intermediary.o enterprise.o synchronization.o configuration.o apsignal.o aptime.o log.o stats.o
-main.o = main.h main-private.h process.h configuration.h apsignal.h log.h stats.h
+main.o = main.h process.h configuration.h apsignal.h log.h stats.h
 memory.o = memory.h
 process.o = process.h client.h intermediary.h enterprise.h synchronization.h
 client.o = client.h synchronization.h aptime.h
