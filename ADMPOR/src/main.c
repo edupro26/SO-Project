@@ -101,8 +101,9 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
     log_init(data);
     print_help();
 
+    printf("\nAlarm time set to %d seconds\n", data->alarm_time);
     while (1) {
-        printf("Introduzir ação:\n");
+        printf("\nIntroduzir ação:\n");
         scanf("%s", command);
 
         if (strcmp(command, "op") == 0) {
@@ -122,8 +123,8 @@ void user_interaction(struct comm_buffers* buffers, struct main_data* data, stru
             print_help();
         } 
         else {
-            char s1[10], s2[10];
-            scanf("%s %s", s1, s2);
+            char temp[100];
+            fgets(temp, sizeof(temp), stdin);
             printf("Ação não reconhecida, insira 'help' para assistência..\n");
         }
     }
@@ -238,7 +239,7 @@ void stop_execution(struct main_data* data, struct comm_buffers* buffers, struct
     wakeup_processes(data, sems);
     wait_processes(data);
 
-    printf("Terminando o AdmPor! Imprimindo estatísticas:\n");
+    printf("\nTerminando o AdmPor! Imprimindo estatísticas:\n");
     write_statistics(data);
     
     
